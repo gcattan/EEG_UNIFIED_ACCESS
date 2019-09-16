@@ -1,0 +1,27 @@
+[submodule "py.BI.EEG.2012-GIPSA"]
+	path = py.BI.EEG.2012-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2012-GIPSA.git
+[submodule "py.BI.EEG.2013-GIPSA"]
+	path = py.BI.EEG.2013-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2013-GIPSA.git
+[submodule "py.BI.EEG.2014a-GIPSA"]
+	path = py.BI.EEG.2014a-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2014a-GIPSA.git
+[submodule "py.BI.EEG.2014b-GIPSA"]
+	path = py.BI.EEG.2014b-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2014b-GIPSA.git
+[submodule "py.BI.EEG.2015a-GIPSA"]
+	path = py.BI.EEG.2015a-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2015a-GIPSA
+[submodule "py.BI.EEG.2015b-GIPSA"]
+	path = py.BI.EEG.2015b-GIPSA
+	url = https://github.com/plcrodrigues/py.BI.EEG.2015b-GIPSA
+[submodule "py.PHMDML.EEG.2017-GIPSA"]
+	path = py.PHMDML.EEG.2017-GIPSA
+	url = https://github.com/plcrodrigues/py.PHMDML.EEG.2017-GIPSA.git
+[submodule "py.VR.EEG.2018-GIPSA"]
+	path = py.VR.EEG.2018-GIPSA
+	url = https://github.com/plcrodrigues/py.VR.EEG.2018-GIPSA.git
+[submodule "py.ALPHA.EEG.2017-GIPSA"]
+	path = py.ALPHA.EEG.2017-GIPSA
+	url = https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA.git

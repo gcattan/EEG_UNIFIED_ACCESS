@@ -1,0 +1,10 @@
+numpy==1.17.2
+mne==0.17.0
+pyriemann==0.2.5
+setuptools==41.0.1
+scipy==1.1.0
+matplotlib==3.0.2
+scikit_learn==0.20.3
+PyYAML==3.13
+pandas==0.25.1
+tqdm==4.28.1

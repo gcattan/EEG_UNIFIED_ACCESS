@@ -1,15 +1,31 @@
-import sys
+# import sys
 
-path = __file__[0:-8] + '/py.BI.EEG.2012-GIPSA/brainInvaders2012/'
-sys.path.append(path)
+# path = __file__[0:-8] + '/py.BI.EEG.2012-GIPSA/brainInvaders2012/'
+# sys.path.append(path)
+# path = __file__[0:-8] + '/py.BI.EEG.2012-GIPSA/'
+# sys.path.append(path)
 
-from dataset import BrainInvaders2012
+
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.externals import joblib
+from pyriemann.classification import MDM
+from pyriemann.estimation import ERPCovariances
+from braininvaders2012.dataset import BrainInvaders2012
+from tqdm import tqdm
+import numpy as np
+import mne
+
+import warnings
+warnings.filterwarnings("ignore")
 
 def classify(dataset):
     scr = {}
     # get the data from subject of interest
     # for subject in dataset.subject_list:
     for subject in [1,2]:
+        print('running subject', subject)
         data = dataset._get_single_subject_data(subject)
         raw = data['session_1']['run_training']
 
@@ -34,9 +50,9 @@ def classify(dataset):
         clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[1]), MDM())
         scr[subject] = cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
     
-    return src
+    return scr
 
 #load BrainInvaders2012 instance
 dataset_2012 = BrainInvaders2012(Training=True)
-src = classify(dataset_2012)
-print(src)
+scr = classify(dataset_2012)
+print(scr)

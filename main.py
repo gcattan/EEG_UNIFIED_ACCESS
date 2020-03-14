@@ -5,6 +5,15 @@
 # path = __file__[0:-8] + '/py.BI.EEG.2012-GIPSA/'
 # sys.path.append(path)
 
+from braininvaders2012.dataset import BrainInvaders2012
+from braininvaders2013.dataset import BrainInvaders2013
+from braininvaders2014a.dataset import BrainInvaders2014a
+from braininvaders2014b.dataset import BrainInvaders2014b
+from braininvaders2015a.dataset import BrainInvaders2015a
+from braininvaders2015b.dataset import BrainInvaders2015b
+from alphawaves.dataset import AlphaWaves
+from headmounted.dataset import HeadMountedDisplay
+from virtualreality.dataset import VirtualReality
 
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import StratifiedKFold, cross_val_score
@@ -12,7 +21,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.externals import joblib
 from pyriemann.classification import MDM
 from pyriemann.estimation import ERPCovariances
-from braininvaders2012.dataset import BrainInvaders2012
 from tqdm import tqdm
 import numpy as np
 import mne
@@ -20,6 +28,7 @@ import mne
 import warnings
 warnings.filterwarnings("ignore")
 
+exit()
 def classify(dataset):
     scr = {}
     # get the data from subject of interest

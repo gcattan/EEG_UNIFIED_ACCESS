@@ -25,3 +25,6 @@
 [submodule "py.ALPHA.EEG.2017-GIPSA"]
 	path = py.ALPHA.EEG.2017-GIPSA
 	url = https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA.git
+[submodule "NeuroTechX.moabb"]
+	path = NeuroTechX.moabb
+	url = https://github.com/NeuroTechX/moabb.git

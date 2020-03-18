@@ -1,5 +1,5 @@
 numpy==1.17.2
-mne==0.17.0
+mne==0.19
 pyriemann==0.2.5
 setuptools==41.0.1
 scipy==1.1.0
@@ -8,3 +8,11 @@ scikit_learn==0.20.3
 pandas==0.25.1
 tqdm==4.28.1
 pyyaml==5.1.2
+seaborn >= 0.9.0
+h5py
+coloredlogs
+sphinx-gallery
+sphinx-bootstrap_theme
+numpydoc
+pillow
+m2r

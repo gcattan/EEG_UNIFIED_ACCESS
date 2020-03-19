@@ -163,6 +163,74 @@ def classify2014b(dataset):
 
     return scores
 
+def classify2015a(dataset):
+    scr = {}
+
+    # note that subject 31 at session 3 has a few samples which are 'nan'
+    # to avoid this problem it could be preferable to dropped the epochs having this condition
+
+    #load data
+    for subject in [1]:
+
+        print('running subject', subject)
+        sessions = dataset._get_single_subject_data(subject)
+        scr[subject] = {}
+
+        for session in sessions.keys():
+
+            print('session', session)
+            raw = sessions[session]['run_1']		
+
+            baseFilter(raw, 1, 24)
+
+            events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
+
+            # get trials and labels
+            X = epochs.get_data()
+            y = epochs.events[:,-1]
+            y = y - 1
+
+            scr[subject][session] = crossValidation(X, y)
+
+    return scr
+
+def classify2015b(dataset):
+    scores = {}
+    for pair in [1]:
+        scores[pair] = {}
+
+        print('pair', str(pair))
+
+        sessions = dataset._get_single_pair_data(pair=pair)
+        for session_name in sessions.keys():
+
+            print('session', session_name)
+            scores[pair][session_name] = {}
+
+            raw = sessions[session_name]['run_1']
+
+            for subject in [1, 2]:
+
+                if subject == 1:
+                    pick_channels = raw.ch_names[0:32] + [raw.ch_names[-1]]
+                elif subject == 2:
+                    pick_channels = raw.ch_names[32:-1] + [raw.ch_names[-1]]    
+
+                raw_subject = raw.copy().pick_channels(pick_channels)
+                
+                baseFilter(raw, 1, 20)            
+
+                events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
+
+                # get trials and labels
+                X = epochs.get_data()
+                y = epochs.events[:,-1]
+                y = y - 1
+
+                scores[pair][session_name][subject] = crossValidation(X, y)
+
+    return scores
+
 # load BrainInvaders2012 instance
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -174,7 +242,13 @@ def classify2014b(dataset):
 # dataset_2014a = BrainInvaders2014a()
 # scr = classify2014a(dataset_2014a)
 
-dataset_2014b = BrainInvaders2014b()
-scr = classify2014b(dataset_2014b)
+# dataset_2014b = BrainInvaders2014b()
+# scr = classify2014b(dataset_2014b)
+
+# dataset_2015a = BrainInvaders2015a() 
+# scr = classify2015a(dataset_2015a)
+
+dataset_2015b = BrainInvaders2015b()
+scr = classify2015b(dataset_2015b)
 
 print(scr)

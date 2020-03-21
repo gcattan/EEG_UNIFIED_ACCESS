@@ -43,7 +43,7 @@ def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name = 'NonTarget'
     event_id = {Class1Name: Class1Value, Class2Name : Class2Value}
     epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=None, verbose=False, preload=True)
     epochs.pick_types(eeg=True)
-    return (events, epochs)
+    return (events, epochs, event_id)
 
 # cross validation
 def crossValidation(X, y):
@@ -326,18 +326,18 @@ def classifyVR(dataset):
 
 def classifyPHMDML(dataset):
 
+    scr = {}
     subject = 1
     for subject in [1]:
 
         # get the raw object with signals from the subject (data will be downloaded if necessary)
         raw = dataset._get_single_subject_data(subject)
-        raw.filter(fmin, fmax).resample(sfreq_resample)	
         baseFilter(raw, 1, 35)
         raw.resample(128)
         dict_channels = {chn : chi for chi, chn in enumerate(raw.ch_names)}
 
         # cut the signals into epochs and get the labels associated to each trial
-        events, epochs = epoching(raw, 1, 2, 10, 50, 'OFF', 'ON')
+        events, epochs, event_id = epoching(raw, 1, 2, 10, 50, 'OFF', 'ON')
 
         X = epochs.get_data()
         inv_events = {k: v for v, k in event_id.items()}
@@ -348,7 +348,7 @@ def classifyPHMDML(dataset):
         scr[subject] = cross_val_score(clf, X, labels, cv=skf).mean()
 
         
-    return
+    return scr
 
 # load BrainInvaders instance
 
@@ -376,7 +376,7 @@ def classifyPHMDML(dataset):
 # dataset_VR = VirtualReality(useMontagePosition=False)
 # scr = classifyVR(dataset_VR)
 
-dataset_PHMDML = HeadMountedDisplay()
+dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 scr = classifyPHMDML(dataset_PHMDML)
 
 print(scr)

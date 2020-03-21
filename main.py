@@ -20,7 +20,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.externals import joblib
 from pyriemann.classification import MDM
-from pyriemann.estimation import ERPCovariances
+from pyriemann.estimation import ERPCovariances, Covariances
 from tqdm import tqdm
 import numpy as np
 import mne
@@ -33,9 +33,9 @@ def baseFilter(raw, minF, maxF):
     raw.filter(minF, maxF, verbose=False)
 
 # detect the events and cut the signal into epochs
-def epoching(raw, NonTarget, Target, tmin, tmax):
+def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name = 'NonTarget', Class2Name = 'Target'):
     events = mne.find_events(raw=raw, shortest_event=1, verbose=False)
-    event_id = {'NonTarget': NonTarget, 'Target': Target}
+    event_id = {Class1Name: Class1Value, Class2Name : Class2Value}
     epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=None, verbose=False, preload=True)
     epochs.pick_types(eeg=True)
     return (events, epochs)
@@ -231,7 +231,29 @@ def classify2015b(dataset):
 
     return scores
 
-# load BrainInvaders2012 instance
+def classsifyAlphaWaves(dataset):
+    scr = {}
+    for subject in dataset.subject_list[0:2]:
+        print('subject', subject)
+        raw = dataset._get_single_subject_data(subject)
+
+        # filter data and resample
+        baseFilter(raw, 3, 40)
+        raw.resample(sfreq=128, verbose=False)
+
+        events, epochs = epoching(raw, 1, 2, 2.0, 8.0, 'closed', 'open')
+
+        # get trials and labels
+        X = epochs.get_data()
+        y = events[:, -1]
+
+        skf = StratifiedKFold(n_splits=5)
+        clf = make_pipeline(Covariances(estimator='lwf'), MDM())
+        scr[subject] = cross_val_score(clf, X, y, cv=skf).mean()
+
+    return scr
+
+# load BrainInvaders instance
 
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012)
@@ -248,7 +270,10 @@ def classify2015b(dataset):
 # dataset_2015a = BrainInvaders2015a() 
 # scr = classify2015a(dataset_2015a)
 
-dataset_2015b = BrainInvaders2015b()
-scr = classify2015b(dataset_2015b)
+# dataset_2015b = BrainInvaders2015b()
+# scr = classify2015b(dataset_2015b)
+
+dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
+scr = classsifyAlphaWaves(dataset_alphaWaves)
 
 print(scr)

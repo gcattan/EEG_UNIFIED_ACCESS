@@ -324,6 +324,32 @@ def classifyVR(dataset):
 
     return df
 
+def classifyPHMDML(dataset):
+
+    subject = 1
+    for subject in [1]:
+
+        # get the raw object with signals from the subject (data will be downloaded if necessary)
+        raw = dataset._get_single_subject_data(subject)
+        raw.filter(fmin, fmax).resample(sfreq_resample)	
+        baseFilter(raw, 1, 35)
+        raw.resample(128)
+        dict_channels = {chn : chi for chi, chn in enumerate(raw.ch_names)}
+
+        # cut the signals into epochs and get the labels associated to each trial
+        events, epochs = epoching(raw, 1, 2, 10, 50, 'OFF', 'ON')
+
+        X = epochs.get_data()
+        inv_events = {k: v for v, k in event_id.items()}
+        labels = np.array([inv_events[e] for e in epochs.events[:, -1]])
+
+        skf = StratifiedKFold(n_splits=5)
+        clf = make_pipeline(Covariances(estimator='lwf'), MDM())
+        scr[subject] = cross_val_score(clf, X, labels, cv=skf).mean()
+
+        
+    return
+
 # load BrainInvaders instance
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -347,7 +373,10 @@ def classifyVR(dataset):
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves)
 
-dataset_VR = VirtualReality(useMontagePosition=False)
-scr = classifyVR(dataset_VR)
+# dataset_VR = VirtualReality(useMontagePosition=False)
+# scr = classifyVR(dataset_VR)
+
+dataset_PHMDML = HeadMountedDisplay()
+scr = classifyPHMDML(dataset_PHMDML)
 
 print(scr)

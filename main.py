@@ -14,16 +14,21 @@ from braininvaders2015b.dataset import BrainInvaders2015b
 from alphawaves.dataset import AlphaWaves
 from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
+from virtualreality.utilities import get_block_repetition
+from moabb.paradigms import P300
 
 from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.model_selection import StratifiedKFold, cross_val_score, KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.externals import joblib
+from sklearn.metrics import roc_auc_score
+
 from pyriemann.classification import MDM
 from pyriemann.estimation import ERPCovariances, Covariances
 from tqdm import tqdm
 import numpy as np
 import mne
+import pandas as pd
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -231,7 +236,7 @@ def classify2015b(dataset):
 
     return scores
 
-def classsifyAlphaWaves(dataset):
+def classifyAlphaWaves(dataset):
     scr = {}
     for subject in dataset.subject_list[0:2]:
         print('subject', subject)
@@ -253,6 +258,72 @@ def classsifyAlphaWaves(dataset):
 
     return scr
 
+def classifyVR(dataset):
+    # get the paradigm
+    paradigm = P300()
+
+    # loop to get scores for each subject
+    nsubjects = 1
+
+    df = {}
+    for tmax in [0.2, 0.3]:
+        print('tmax', tmax)
+        paradigm.tmax = tmax
+
+        scores = []
+        for subject in dataset.subject_list[:nsubjects]:
+            print('subject', subject)
+
+            scores_subject = [subject]
+            for condition in ['VR', 'PC']:
+                print('condition', condition)
+
+                # define the dataset instance
+                if condition is 'VR':
+                    dataset.VR = True
+                    dataset.PC = False
+                elif condition is 'PC':
+                    dataset.VR = False
+                    dataset.PC = True
+
+                # get the epochs and labels
+                X, labels, meta = paradigm.get_data(dataset, subjects=[subject])
+                labels = LabelEncoder().fit_transform(labels)
+
+                kf = KFold(n_splits = 6)
+                repetitions = [1, 2]				
+                auc = []
+
+                blocks = np.arange(1, 12+1)
+                for train_idx, test_idx in kf.split(np.arange(12)):
+
+                    # split in training and testing blocks
+                    X_training, labels_training, _ = get_block_repetition(X, labels, meta, blocks[train_idx], repetitions)
+                    X_test, labels_test, _ = get_block_repetition(X, labels, meta, blocks[test_idx], repetitions)
+
+                    # estimate the extended ERP covariance matrices with Xdawn
+                    dict_labels = {'Target':1, 'NonTarget':0}
+                    erpc = ERPCovariances(classes=[dict_labels['Target']], estimator='lwf')
+                    erpc.fit(X_training, labels_training)
+                    covs_training = erpc.transform(X_training)
+                    covs_test = erpc.transform(X_test)
+
+                    # get the AUC for the classification
+                    clf = MDM()
+                    clf.fit(covs_training, labels_training)
+                    labels_pred = clf.predict(covs_test)
+                    auc.append(roc_auc_score(labels_test, labels_pred))
+
+                # stock scores
+                scores_subject.append(np.mean(auc))
+
+            scores.append(scores_subject)
+
+        # print results
+        df[tmax] = pd.DataFrame(scores, columns=['subject', 'VR', 'PC'])
+
+    return df
+
 # load BrainInvaders instance
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -273,7 +344,10 @@ def classsifyAlphaWaves(dataset):
 # dataset_2015b = BrainInvaders2015b()
 # scr = classify2015b(dataset_2015b)
 
-dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
-scr = classsifyAlphaWaves(dataset_alphaWaves)
+# dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
+# scr = classifyAlphaWaves(dataset_alphaWaves)
+
+dataset_VR = VirtualReality(useMontagePosition=False)
+scr = classifyVR(dataset_VR)
 
 print(scr)

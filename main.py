@@ -382,4 +382,14 @@ def classifyPHMDML(dataset):
 # dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML)
 
-print(scr)
+#print(scr)
+
+def computeCombination(*xi, **kwargs):
+    print(len(kwargs))
+    return np.array(np.meshgrid(*xi, *kwargs)).T.reshape(-1,len(kwargs))
+
+x = [1, 2]
+new_array = computeCombination(x, first=x, second=x, third=x, fourth = x)
+print(new_array)
+
+

@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "py.ALPHA.EEG.2017-GIPSA\\alphawaves"
+		},
+		{
+			"path": "py.BI.EEG.2012-GIPSA\\braininvaders2012"
+		},
+		{
+			"path": "py.BI.EEG.2013-GIPSA\\braininvaders2013"
+		},
+		{
+			"path": "py.BI.EEG.2014a-GIPSA\\braininvaders2014a"
+		},
+		{
+			"path": "py.BI.EEG.2014b-GIPSA\\braininvaders2014b"
+		},
+		{
+			"path": "py.BI.EEG.2015a-GIPSA\\braininvaders2015a"
+		},
+		{
+			"path": "py.BI.EEG.2015b-GIPSA\\braininvaders2015b"
+		},
+		{
+			"path": "py.PHMDML.EEG.2017-GIPSA\\headmounted"
+		},
+		{
+			"path": "py.VR.EEG.2018-GIPSA\\virtualreality"
+		},
+		{
+			"path": "."
+		}
+	]
+}

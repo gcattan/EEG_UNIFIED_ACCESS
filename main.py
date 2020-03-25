@@ -29,36 +29,47 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
+from Parameters import Parameters
 
 import warnings
 warnings.filterwarnings("ignore")
 
 # filter data and resample
-def baseFilter(raw, minF, maxF, sfResample = None):
+
+
+def baseFilter(raw, minF, maxF, sfResample=None):
     raw.filter(minF, maxF, verbose=False)
     if(not sfResample == None):
         raw.resample(sfResample, verbose=False)
 
 # detect the events and cut the signal into epochs
-def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name = 'NonTarget', Class2Name = 'Target'):
+
+
+def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name='NonTarget', Class2Name='Target'):
     events = mne.find_events(raw=raw, shortest_event=1, verbose=False)
-    event_id = {Class1Name: Class1Value, Class2Name : Class2Value}
-    epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=None, verbose=False, preload=True)
+    event_id = {Class1Name: Class1Value, Class2Name: Class2Value}
+    epochs = mne.Epochs(raw, events, event_id, tmin=tmin,
+                        tmax=tmax, baseline=None, verbose=False, preload=True)
     epochs.pick_types(eeg=True)
     return (events, epochs, event_id)
 
 # cross validation
-def crossValidationERP(X, y, ClassName='Target', ClassInfo={'Target':1, 'NonTarget':2},):
+
+
+def crossValidationERP(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2},):
     skf = StratifiedKFold(n_splits=5)
-    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[ClassInfo[ClassName]]), MDM())# TODO Fix classes=[1]
+    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[
+                        ClassInfo[ClassName]]), MDM())  # TODO Fix classes=[1]
     return cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
+
 
 def crossValidation(X, y):
     skf = StratifiedKFold(n_splits=5)
     clf = make_pipeline(Covariances(estimator='lwf'), MDM())
     return cross_val_score(clf, X, y, cv=skf).mean()
 
-def crossValidationVR(X_training, labels_training, X_test, labels_test, ClassName='Target', ClassInfo={'Target':1, 'NonTarget':0}):
+
+def crossValidationVR(X_training, labels_training, X_test, labels_test, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 0}):
     # estimate the extended ERP covariance matrices with Xdawn
     #dict_labels = {'Target':1, 'NonTarget':0}
     erpc = ERPCovariances(classes=[ClassInfo[ClassName]], estimator='lwf')
@@ -72,12 +83,14 @@ def crossValidationVR(X_training, labels_training, X_test, labels_test, ClassNam
     labels_pred = clf.predict(covs_test)
     return roc_auc_score(labels_test, labels_pred)
 
+
 def getData(dataset, subject):
     return dataset._get_single_subject_data(subject)
 
-def getBaseTrialAndLabel(epochs, events, fixIndex = False):
+
+def getBaseTrialAndLabel(epochs, events, fixIndex=False):
     y = events[:, -1]
-    return epochs.get_data(), y - 1 if fixIndex else y 
+    return epochs.get_data(), y - 1 if fixIndex else y
 
 
 def classify2012(dataset):
@@ -85,10 +98,10 @@ def classify2012(dataset):
     # get the data from subject of interest
     # for subject in dataset.subject_list:
 
-    #Target|NonTarget
-    #tmin|tmax
-    #resampling
-    #subject
+    # Target|NonTarget
+    # tmin|tmax
+    # resampling
+    # subject
     for subject in [1]:
 
         print('running subject', subject)
@@ -104,22 +117,23 @@ def classify2012(dataset):
         y = LabelEncoder().fit_transform(y)
 
         scr[subject] = crossValidationERP(X, y)
-    
+
     return scr
+
 
 def classify2013(dataset):
     scores = {}
 
     # get the data from subject of interest
     for subject in [8]:
-        
+
         print('running subject', subject)
 
         scores[subject] = {}
 
         data = getData(dataset, subject)
 
-        for session in data.keys():			
+        for session in data.keys():
 
             print('running session', session)
 
@@ -140,11 +154,12 @@ def classify2013(dataset):
 
     return scores
 
+
 def classify2014a(dataset):
     scr = {}
     for subject in [1]:
 
-        #load data
+        # load data
         print('running subject', subject)
         sessions = getData(dataset, subject)
         raw = sessions['session_1']['run_1']
@@ -158,6 +173,7 @@ def classify2014a(dataset):
         scr[subject] = crossValidationERP(X, y)
 
     return scr
+
 
 def classify2014b(dataset):
     scores = {}
@@ -175,18 +191,20 @@ def classify2014b(dataset):
             print('subject', subject)
 
             # subject 1
-            raw_solo = sessions['solo_' + str(subject)]['run_1']        
+            raw_solo = sessions['solo_' + str(subject)]['run_1']
             if subject == 1:
-                pick_channels = raw_solo.ch_names[0:32] + [raw_solo.ch_names[-1]]
+                pick_channels = raw_solo.ch_names[0:32] + \
+                    [raw_solo.ch_names[-1]]
             elif subject == 2:
-                pick_channels = raw_solo.ch_names[32:-1] + [raw_solo.ch_names[-1]]        
+                pick_channels = raw_solo.ch_names[32:-
+                                                  1] + [raw_solo.ch_names[-1]]
             raw_solo.pick_channels(pick_channels)
             raw_cola = sessions['collaborative']['run_1']
             raw_cola = raw_cola.copy().pick_channels(pick_channels)
 
-            for condition, raw in zip(['solo', 'cola'], [raw_solo, raw_cola]):        
+            for condition, raw in zip(['solo', 'cola'], [raw_solo, raw_cola]):
 
-                baseFilter(raw, 0, 20)          
+                baseFilter(raw, 0, 20)
                 events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
 
                 # get trials and labels
@@ -196,13 +214,14 @@ def classify2014b(dataset):
 
     return scores
 
+
 def classify2015a(dataset):
     scr = {}
 
     # note that subject 31 at session 3 has a few samples which are 'nan'
     # to avoid this problem it could be preferable to dropped the epochs having this condition
 
-    #load data
+    # load data
     for subject in [1]:
 
         print('running subject', subject)
@@ -212,7 +231,7 @@ def classify2015a(dataset):
         for session in sessions.keys():
 
             print('session', session)
-            raw = sessions[session]['run_1']		
+            raw = sessions[session]['run_1']
 
             baseFilter(raw, 1, 24)
 
@@ -224,6 +243,7 @@ def classify2015a(dataset):
             scr[subject][session] = crossValidationERP(X, y)
 
     return scr
+
 
 def classify2015b(dataset):
     scores = {}
@@ -245,11 +265,11 @@ def classify2015b(dataset):
                 if subject == 1:
                     pick_channels = raw.ch_names[0:32] + [raw.ch_names[-1]]
                 elif subject == 2:
-                    pick_channels = raw.ch_names[32:-1] + [raw.ch_names[-1]]    
+                    pick_channels = raw.ch_names[32:-1] + [raw.ch_names[-1]]
 
                 raw_subject = raw.copy().pick_channels(pick_channels)
-                
-                baseFilter(raw, 1, 20)            
+
+                baseFilter(raw, 1, 20)
 
                 events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
 
@@ -259,6 +279,7 @@ def classify2015b(dataset):
                 scores[pair][session_name][subject] = crossValidationERP(X, y)
 
     return scores
+
 
 def classifyAlphaWaves(dataset):
     scr = {}
@@ -276,6 +297,7 @@ def classifyAlphaWaves(dataset):
         scr[subject] = crossValidation(X, y)
 
     return scr
+
 
 def classifyVR(dataset):
     # get the paradigm
@@ -302,21 +324,25 @@ def classifyVR(dataset):
                 dataset.PC = True if condition is 'PC' else False
 
                 # get the epochs and labels
-                X, labels, meta = paradigm.get_data(dataset, subjects=[subject])
+                X, labels, meta = paradigm.get_data(
+                    dataset, subjects=[subject])
                 labels = LabelEncoder().fit_transform(labels)
 
-                kf = KFold(n_splits = 6)
-                repetitions = [1, 2]				
+                kf = KFold(n_splits=6)
+                repetitions = [1, 2]
                 auc = []
 
                 blocks = np.arange(1, 13)
                 for train_idx, test_idx in kf.split(np.arange(12)):
 
                     # split in training and testing blocks
-                    X_training, labels_training, _ = get_block_repetition(X, labels, meta, blocks[train_idx], repetitions)
-                    X_test, labels_test, _ = get_block_repetition(X, labels, meta, blocks[test_idx], repetitions)
+                    X_training, labels_training, _ = get_block_repetition(
+                        X, labels, meta, blocks[train_idx], repetitions)
+                    X_test, labels_test, _ = get_block_repetition(
+                        X, labels, meta, blocks[test_idx], repetitions)
 
-                    val = crossValidationVR(X_training, labels_training, X_test, labels_test)
+                    val = crossValidationVR(
+                        X_training, labels_training, X_test, labels_test)
                     auc.append(val)
 
                 # stock scores
@@ -329,6 +355,7 @@ def classifyVR(dataset):
 
     return df
 
+
 def classifyPHMDML(dataset):
 
     scr = {}
@@ -340,7 +367,7 @@ def classifyPHMDML(dataset):
         raw = getData(dataset, subject)
         baseFilter(raw, 1, 35, 128)
 
-        dict_channels = {chn : chi for chi, chn in enumerate(raw.ch_names)}
+        dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
         # cut the signals into epochs and get the labels associated to each trial
         events, epochs, event_id = epoching(raw, 1, 2, 10, 50, 'OFF', 'ON')
@@ -355,6 +382,7 @@ def classifyPHMDML(dataset):
 
 # load BrainInvaders instance
 
+
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012)
 
@@ -367,7 +395,7 @@ def classifyPHMDML(dataset):
 # dataset_2014b = BrainInvaders2014b()
 # scr = classify2014b(dataset_2014b)
 
-# dataset_2015a = BrainInvaders2015a() 
+# dataset_2015a = BrainInvaders2015a()
 # scr = classify2015a(dataset_2015a)
 
 # dataset_2015b = BrainInvaders2015b()
@@ -381,15 +409,10 @@ def classifyPHMDML(dataset):
 
 # dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML)
+params = Parameters(condition=['Target'], tmin=[-0.1, 0, 0.1],
+                    tmax=[0.8, 1.0], resampling=[128], subject=[1])
+for lz in params.getBi2012():
+    print(lz.get('condition'), lz.get('tmin'), lz.get(
+        'tmax'), lz.get('resampling'), lz.get('subject'))
 
-#print(scr)
-
-def computeCombination(*xi, **kwargs):
-    print(len(kwargs))
-    return np.array(np.meshgrid(*xi, *kwargs)).T.reshape(-1,len(kwargs))
-
-x = [1, 2]
-new_array = computeCombination(x, first=x, second=x, third=x, fourth = x)
-print(new_array)
-
-
+# print(scr)

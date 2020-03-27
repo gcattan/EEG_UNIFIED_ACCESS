@@ -93,30 +93,33 @@ def getBaseTrialAndLabel(epochs, events, fixIndex=False):
     return epochs.get_data(), y - 1 if fixIndex else y
 
 
-def classify2012(dataset):
+def classify2012(dataset, params):
     scr = {}
     # get the data from subject of interest
     # for subject in dataset.subject_list:
 
     # Target|NonTarget
     # tmin|tmax
+    # fMin|fMax
     # resampling
     # subject
-    for subject in [1]:
+    for lz in params.getBi2012():
 
-        print('running subject', subject)
+        print('running', lz)
 
-        data = getData(dataset, subject)
+        data = getData(dataset, lz.subject)
         raw = data['session_1']['run_training']
 
-        baseFilter(raw, 1, 24)
-        events, epochs = epoching(raw, 1, 2, 0.0, 0.1)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        events, epochs, _ = epoching(
+            raw, 1, 2, lz.tmin, lz.tmax)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        scr[subject] = crossValidationERP(X, y)
+        scr[str(lz)] = crossValidationERP(
+            X, y, lz.condition)
 
     return scr
 
@@ -380,11 +383,18 @@ def classifyPHMDML(dataset):
 
     return scr
 
+
+params = Parameters(condition=['Target'], tmin=[-0.1, 0, 0.1],
+                    tmax=[0.8, 1.0], resampling=[128], subject=[1], fMin=[1], fMax=[24])
+# for lz in params.getBi2012():
+#     print(lz.condition, lz.tmin, lz.tmax,
+#           lz.resampling, lz.subject, lz.fMin, lz.fMax)
+
 # load BrainInvaders instance
 
 
-# dataset_2012 = BrainInvaders2012(Training=True)
-# scr = classify2012(dataset_2012)
+dataset_2012 = BrainInvaders2012(Training=True)
+scr = classify2012(dataset_2012, params)
 
 # dataset_2013 = BrainInvaders2013(NonAdaptive=True, Adaptive=False, Training=True, Online=False)
 # scr = classify2013(dataset_2013)
@@ -409,10 +419,5 @@ def classifyPHMDML(dataset):
 
 # dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML)
-params = Parameters(condition=['Target'], tmin=[-0.1, 0, 0.1],
-                    tmax=[0.8, 1.0], resampling=[128], subject=[1])
-for lz in params.getBi2012():
-    print(lz.get('condition'), lz.get('tmin'), lz.get(
-        'tmax'), lz.get('resampling'), lz.get('subject'))
 
-# print(scr)
+print(scr)

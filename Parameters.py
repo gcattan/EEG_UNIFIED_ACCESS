@@ -8,4 +8,4 @@ class Parameters():
     def getBi2012(self):
         return lz(condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.params['subject'])
+                  subject=self.params['subject'], fMin=self.params['fMin'], fMax=self.params['fMax'])

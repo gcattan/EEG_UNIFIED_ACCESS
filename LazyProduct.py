@@ -46,9 +46,15 @@ class LazyProduct():
         setattr(LazyProduct,
                 self.iteratorName[i], self.get(self.iteratorName[i]))
 
+    def __str__(self):
+        res = ""
+        for name in self.iteratorName:
+            res += name + "=" + str(getattr(LazyProduct, name)) + ";"
+        return res
+
     def get(self, iteratorName):
         return self.arrays[iteratorName][self.iterators[self.iteratorName.index(iteratorName)] - 1]
 
 
-for c in LazyProduct(first=[1, 2], second=['a', 'b'], third=['#', '%', 'km']):
-    print(c.first, c.second, c.third)
+# for c in LazyProduct(first=[1, 2], second=['a', 'b'], third=['#', '%', 'km']):
+#     print(c.first, c.second, c.third)

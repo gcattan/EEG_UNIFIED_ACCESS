@@ -1,6 +1,13 @@
 import json
 
 
+def __keyContainsKeywords__(key, keywords):
+    for kw in keywords:
+        if not kw in key:
+            return False
+    return True
+
+
 class Store():
     def __init__(self):
         self.f = open('computational_cache.json', 'r+')
@@ -14,6 +21,9 @@ class Store():
 
     def __contains__(self, key):
         return str(key) in self.cache
+
+    def select(self, keywords):
+        return [(x, self[x]) for x in self.cache if __keyContainsKeywords__(x, keywords)]
 
     def save(self):
         self.f.seek(0)

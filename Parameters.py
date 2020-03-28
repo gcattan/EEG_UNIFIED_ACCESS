@@ -24,3 +24,8 @@ class Parameters():
         return lz(bdd=['bi2012'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+
+    def getDefaultBi2012(self, dataset):
+        return lz(bdd=['bi2012'], condition=['Target'], tmin=[0.0],
+                  tmax=[1.0], resampling=[None],
+                  subject=dataset.subject_list, fMin=[1], fMax=[24])

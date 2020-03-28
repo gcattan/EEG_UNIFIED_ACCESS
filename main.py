@@ -108,14 +108,6 @@ def useStore(params, store, key, validationMethod, *args):
 
 def classify2012(dataset, params, store):
     scr = {}
-    # get the data from subject of interest
-    # for subject in dataset.subject_list:
-
-    # Target|NonTarget
-    # tmin|tmax
-    # fMin|fMax
-    # resampling
-    # subject
 
     for lz in params.getBi2012(dataset):
 
@@ -132,17 +124,6 @@ def classify2012(dataset, params, store):
         X, y = getBaseTrialAndLabel(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        # if params.useCache:
-        #     if lz in store:
-        #         ret = store[lz]
-        #     else:
-        #         ret = crossValidationERP(
-        #             X, y, lz.condition)
-        #         store[lz] = ret
-        # else:
-        #     ret = crossValidationERP(
-        #         X, y, lz.condition)
-
         ret = useStore(params, store, lz, crossValidationERP,
                        X, y, lz.condition)
 
@@ -151,17 +132,22 @@ def classify2012(dataset, params, store):
     return scr
 
 
-def classify2013(dataset):
+def classify2013(dataset, params, store):
     scores = {}
 
     # get the data from subject of interest
-    for subject in [8]:
+    # subject
+    # fMin
+    # fMax
+    # tMin
+    # tMax
+    for lz in params.getBi2013(dataset):
 
-        print('running subject', subject)
+        print('running', lz)
 
-        scores[subject] = {}
+        scores[lz.subject] = {}
 
-        data = getData(dataset, subject)
+        data = getData(dataset, lz.subject)
 
         for session in data.keys():
 
@@ -169,18 +155,19 @@ def classify2013(dataset):
 
             raw = data[session]['run_3']
 
-            baseFilter(raw, 1, 24)
+            baseFilter(raw, lz.fMin, lz.fMax)
 
-            events, epochs = epoching(raw, 33286, 33285, 0.0, 0.1)
+            events, epochs = epoching(raw, 33286, 33285, lz.tmin, lz.tmax)
 
             # get trials and labels
             X, y = getBaseTrialAndLabel(epochs, events)
             y[y == 33286] = 0
             y[y == 33285] = 1
 
-            scr = crossValidationERP(X, y)
+            scr = useStore(params, store, lz, crossValidationERP,
+                           X, y, lz.condition)
 
-            scores[subject][session] = scr.mean()
+            scores[lz.subject][session] = scr.mean()
 
     return scores
 
@@ -412,6 +399,11 @@ def classifyPHMDML(dataset):
 
 
 store = Store()
+
+print(store.select(['tmin=0.1']))
+
+exit()
+
 params = Parameters(True, condition=['Target'], tmin=[0],
                     tmax=[1.0], resampling=[128], subject="30%", fMin=[1], fMax=[24])
 # for lz in params.getBi2012():

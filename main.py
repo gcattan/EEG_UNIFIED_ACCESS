@@ -106,7 +106,7 @@ def classify2012(dataset, params, store):
     # subject
     for lz in params.getBi2012():
 
-        print('running BI2012', lz)
+        print('running', lz)
 
         data = getData(dataset, lz.subject)
         raw = data['session_1']['run_training']
@@ -120,12 +120,12 @@ def classify2012(dataset, params, store):
         y = LabelEncoder().fit_transform(y)
 
         if params.useCache:
-            if str(lz) in store:
-                ret = store[str(lz)]
+            if lz in store:
+                ret = store[lz]
             else:
                 ret = crossValidationERP(
                     X, y, lz.condition)
-                store[str(lz)] = ret
+                store[lz] = ret
         else:
             ret = crossValidationERP(
                 X, y, lz.condition)

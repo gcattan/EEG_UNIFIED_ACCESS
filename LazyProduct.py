@@ -5,6 +5,7 @@ def getDicoKeys(*names):
 class LazyProduct():
 
     def __init__(self, **arrays):
+        self.stringRep = None
         self.arrays = arrays
         self.size = len(arrays)
         self.iteratorName = getDicoKeys(*arrays)
@@ -22,7 +23,7 @@ class LazyProduct():
         return self
 
     def __next__(self):
-
+        self.stringRep = None
         self.iterators[0] += 1
         for i in range(0, self.size):
             iterator = self.iterators[i]
@@ -47,10 +48,12 @@ class LazyProduct():
                 self.iteratorName[i], self.get(self.iteratorName[i]))
 
     def __str__(self):
-        res = ""
-        for name in self.iteratorName:
-            res += name + "=" + str(getattr(LazyProduct, name)) + ";"
-        return res
+        if(self.stringRep == None):
+            self.stringRep = ""
+            for name in self.iteratorName:
+                self.stringRep += name + "=" + \
+                    str(getattr(LazyProduct, name)) + ";"
+        return self.stringRep
 
     def get(self, iteratorName):
         return self.arrays[iteratorName][self.iterators[self.iteratorName.index(iteratorName)] - 1]

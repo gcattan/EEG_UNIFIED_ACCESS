@@ -7,13 +7,13 @@ class Store():
         self.cache = json.load(self.f)
 
     def __getitem__(self, key):
-        return self.cache[key]
+        return self.cache[str(key)]
 
     def __setitem__(self, key, value):
         self.cache[key] = value
 
     def __contains__(self, key):
-        return key in self.cache
+        return str(key) in self.cache
 
     def save(self):
         self.f.seek(0)

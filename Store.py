@@ -10,7 +10,7 @@ class Store():
         return self.cache[str(key)]
 
     def __setitem__(self, key, value):
-        self.cache[key] = value
+        self.cache[str(key)] = value
 
     def __contains__(self, key):
         return str(key) in self.cache

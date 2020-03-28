@@ -72,7 +72,7 @@ def crossValidation(X, y):
 
 def crossValidationVR(X_training, labels_training, X_test, labels_test, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 0}):
     # estimate the extended ERP covariance matrices with Xdawn
-    #dict_labels = {'Target':1, 'NonTarget':0}
+    # dict_labels = {'Target':1, 'NonTarget':0}
     erpc = ERPCovariances(classes=[ClassInfo[ClassName]], estimator='lwf')
     erpc.fit(X_training, labels_training)
     covs_training = erpc.transform(X_training)
@@ -94,6 +94,18 @@ def getBaseTrialAndLabel(epochs, events, fixIndex=False):
     return epochs.get_data(), y - 1 if fixIndex else y
 
 
+def useStore(params, store, key, validationMethod, *args):
+    if params.useCache:
+        if key in store:
+            ret = store[key]
+        else:
+            ret = validationMethod(*args)
+            store[key] = ret
+    else:
+        ret = validationMethod(*args)
+    return ret
+
+
 def classify2012(dataset, params, store):
     scr = {}
     # get the data from subject of interest
@@ -104,7 +116,8 @@ def classify2012(dataset, params, store):
     # fMin|fMax
     # resampling
     # subject
-    for lz in params.getBi2012():
+
+    for lz in params.getBi2012(dataset):
 
         print('running', lz)
 
@@ -119,16 +132,19 @@ def classify2012(dataset, params, store):
         X, y = getBaseTrialAndLabel(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        if params.useCache:
-            if lz in store:
-                ret = store[lz]
-            else:
-                ret = crossValidationERP(
-                    X, y, lz.condition)
-                store[lz] = ret
-        else:
-            ret = crossValidationERP(
-                X, y, lz.condition)
+        # if params.useCache:
+        #     if lz in store:
+        #         ret = store[lz]
+        #     else:
+        #         ret = crossValidationERP(
+        #             X, y, lz.condition)
+        #         store[lz] = ret
+        # else:
+        #     ret = crossValidationERP(
+        #         X, y, lz.condition)
+
+        ret = useStore(params, store, lz, crossValidationERP,
+                       X, y, lz.condition)
 
         scr[str(lz)] = ret
 
@@ -396,8 +412,8 @@ def classifyPHMDML(dataset):
 
 
 store = Store()
-params = Parameters(True, condition=['Target'], tmin=[-0.1, 0, 0.1],
-                    tmax=[0.8, 1.0], resampling=[128], subject=[1], fMin=[1], fMax=[24])
+params = Parameters(True, condition=['Target'], tmin=[0],
+                    tmax=[1.0], resampling=[128], subject="30%", fMin=[1], fMax=[24])
 # for lz in params.getBi2012():
 #     print(lz.condition, lz.tmin, lz.tmax,
 #           lz.resampling, lz.subject, lz.fMin, lz.fMax)

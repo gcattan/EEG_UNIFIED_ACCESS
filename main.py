@@ -159,22 +159,24 @@ def classify2013(dataset, params, store):
     return scores
 
 
-def classify2014a(dataset):
+def classify2014a(dataset, params, store):
     scr = {}
-    for subject in [1]:
+
+    for lz in params.getBi2014a(dataset):
 
         # load data
-        print('running subject', subject)
-        sessions = getData(dataset, subject)
+        print('running subject', lz)
+        sessions = getData(dataset, lz.subject)
         raw = sessions['session_1']['run_1']
 
-        baseFilter(raw, 1, 20)
-        events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
+        baseFilter(raw, lz.fMin, lz.fMax)
+        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-        scr[subject] = crossValidationERP(X, y)
+        scr[str(lz)] = useStore(params, store, lz, crossValidationERP,
+                                X, y, lz.condition)
 
     return scr
 
@@ -393,12 +395,12 @@ params = Parameters(True, condition=['Target'], tmin=[0],
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012, params, store)
 
-dataset_2013 = BrainInvaders2013(
-    NonAdaptive=True, Adaptive=False, Training=True, Online=False)
-scr = classify2013(dataset_2013, params, store)
+# dataset_2013 = BrainInvaders2013(
+#     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
+# scr = classify2013(dataset_2013, params, store)
 
-# dataset_2014a = BrainInvaders2014a()
-# scr = classify2014a(dataset_2014a)
+dataset_2014a = BrainInvaders2014a()
+scr = classify2014a(dataset_2014a, params, store)
 
 # dataset_2014b = BrainInvaders2014b()
 # scr = classify2014b(dataset_2014b)

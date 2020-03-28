@@ -136,38 +136,25 @@ def classify2013(dataset, params, store):
     scores = {}
 
     # get the data from subject of interest
-    # subject
-    # fMin
-    # fMax
-    # tMin
-    # tMax
     for lz in params.getBi2013(dataset):
 
         print('running', lz)
 
-        scores[lz.subject] = {}
-
         data = getData(dataset, lz.subject)
 
-        for session in data.keys():
+        raw = data[lz.session]['run_3']
 
-            print('running session', session)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
 
-            raw = data[session]['run_3']
+        events, epochs, _ = epoching(raw, 33286, 33285, lz.tmin, lz.tmax)
 
-            baseFilter(raw, lz.fMin, lz.fMax)
+        # get trials and labels
+        X, y = getBaseTrialAndLabel(epochs, events)
+        y[y == 33286] = 0
+        y[y == 33285] = 1
 
-            events, epochs = epoching(raw, 33286, 33285, lz.tmin, lz.tmax)
-
-            # get trials and labels
-            X, y = getBaseTrialAndLabel(epochs, events)
-            y[y == 33286] = 0
-            y[y == 33285] = 1
-
-            scr = useStore(params, store, lz, crossValidationERP,
-                           X, y, lz.condition)
-
-            scores[lz.subject][session] = scr.mean()
+        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
+                                   X, y, lz.condition)
 
     return scores
 
@@ -400,26 +387,15 @@ def classifyPHMDML(dataset):
 
 store = Store()
 
-print(store.select(['tmin=0.1']))
-
-exit()
-
 params = Parameters(True, condition=['Target'], tmin=[0],
-                    tmax=[1.0], resampling=[128], subject="30%", fMin=[1], fMax=[24])
-# for lz in params.getBi2012():
-#     print(lz.condition, lz.tmin, lz.tmax,
-#           lz.resampling, lz.subject, lz.fMin, lz.fMax)
+                    tmax=[1.0], resampling=[None], subject=[1], fMin=[1], fMax=[24], session=[2, 3, 4])
 
-# load BrainInvaders instance
+# dataset_2012 = BrainInvaders2012(Training=True)
+# scr = classify2012(dataset_2012, params, store)
 
-
-dataset_2012 = BrainInvaders2012(Training=True)
-scr = classify2012(dataset_2012, params, store)
-
-store.save()
-
-# dataset_2013 = BrainInvaders2013(NonAdaptive=True, Adaptive=False, Training=True, Online=False)
-# scr = classify2013(dataset_2013)
+dataset_2013 = BrainInvaders2013(
+    NonAdaptive=True, Adaptive=False, Training=True, Online=False)
+scr = classify2013(dataset_2013, params, store)
 
 # dataset_2014a = BrainInvaders2014a()
 # scr = classify2014a(dataset_2014a)
@@ -441,5 +417,7 @@ store.save()
 
 # dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML)
+
+store.save()
 
 print(scr)

@@ -30,6 +30,7 @@ import numpy as np
 import mne
 import pandas as pd
 from Parameters import Parameters
+from Store import Store
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -93,7 +94,7 @@ def getBaseTrialAndLabel(epochs, events, fixIndex=False):
     return epochs.get_data(), y - 1 if fixIndex else y
 
 
-def classify2012(dataset, params):
+def classify2012(dataset, params, store):
     scr = {}
     # get the data from subject of interest
     # for subject in dataset.subject_list:
@@ -105,7 +106,7 @@ def classify2012(dataset, params):
     # subject
     for lz in params.getBi2012():
 
-        print('running', lz)
+        print('running BI2012', lz)
 
         data = getData(dataset, lz.subject)
         raw = data['session_1']['run_training']
@@ -118,8 +119,18 @@ def classify2012(dataset, params):
         X, y = getBaseTrialAndLabel(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        scr[str(lz)] = crossValidationERP(
-            X, y, lz.condition)
+        if params.useCache:
+            if str(lz) in store:
+                ret = store[str(lz)]
+            else:
+                ret = crossValidationERP(
+                    X, y, lz.condition)
+                store[str(lz)] = ret
+        else:
+            ret = crossValidationERP(
+                X, y, lz.condition)
+
+        scr[str(lz)] = ret
 
     return scr
 
@@ -384,7 +395,8 @@ def classifyPHMDML(dataset):
     return scr
 
 
-params = Parameters(condition=['Target'], tmin=[-0.1, 0, 0.1],
+store = Store()
+params = Parameters(True, condition=['Target'], tmin=[-0.1, 0, 0.1],
                     tmax=[0.8, 1.0], resampling=[128], subject=[1], fMin=[1], fMax=[24])
 # for lz in params.getBi2012():
 #     print(lz.condition, lz.tmin, lz.tmax,
@@ -394,7 +406,9 @@ params = Parameters(condition=['Target'], tmin=[-0.1, 0, 0.1],
 
 
 dataset_2012 = BrainInvaders2012(Training=True)
-scr = classify2012(dataset_2012, params)
+scr = classify2012(dataset_2012, params, store)
+
+store.save()
 
 # dataset_2013 = BrainInvaders2013(NonAdaptive=True, Adaptive=False, Training=True, Online=False)
 # scr = classify2013(dataset_2013)

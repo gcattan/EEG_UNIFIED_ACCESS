@@ -184,6 +184,15 @@ def classify2014a(dataset, params, store):
 def classify2014b(dataset):
     scores = {}
 
+    # pair
+    # subject
+    # fmin
+    # fmax
+    # resampling
+    # tmmin
+    # tmax
+    # condition
+
     for pair in [1]:
         scores[pair] = {}
 

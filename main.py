@@ -181,51 +181,33 @@ def classify2014a(dataset, params, store):
     return scr
 
 
-def classify2014b(dataset):
+def classify2014b(dataset, params, store):
     scores = {}
 
-    # pair
-    # subject
-    # fmin
-    # fmax
-    # resampling
-    # tmmin
-    # tmax
-    # condition
+    for lz in params.getBi2014b(dataset):
 
-    for pair in [1]:
-        scores[pair] = {}
+        print('running pair', lz)
 
-        print('pair', str(pair))
+        sessions = dataset._get_single_pair_data(pair=lz.pair)
 
-        sessions = dataset._get_single_pair_data(pair=pair)
+        if lz.xpdesign == 'solo':
+            raw = sessions['solo_' + str(lz.subject)]['run_1']
+        else:
+            raw = sessions['collaborative']['run_1']
 
-        for subject in [1, 2]:
-            scores[pair][subject] = {}
+        pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
+                                     32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
 
-            print('subject', subject)
+        raw = raw.copy().pick_channels(pick_channels)
 
-            # subject 1
-            raw_solo = sessions['solo_' + str(subject)]['run_1']
-            if subject == 1:
-                pick_channels = raw_solo.ch_names[0:32] + \
-                    [raw_solo.ch_names[-1]]
-            elif subject == 2:
-                pick_channels = raw_solo.ch_names[32:-
-                                                  1] + [raw_solo.ch_names[-1]]
-            raw_solo.pick_channels(pick_channels)
-            raw_cola = sessions['collaborative']['run_1']
-            raw_cola = raw_cola.copy().pick_channels(pick_channels)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
-            for condition, raw in zip(['solo', 'cola'], [raw_solo, raw_cola]):
+        # get trials and labels
+        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-                baseFilter(raw, 0, 20)
-                events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
-
-                # get trials and labels
-                X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
-
-                scores[pair][subject][condition] = crossValidationERP(X, y)
+        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
+                                   X, y, lz.condition)
 
     return scores
 
@@ -398,8 +380,9 @@ def classifyPHMDML(dataset):
 
 store = Store()
 
-params = Parameters(True, condition=['Target'], tmin=[0],
-                    tmax=[1.0], resampling=[None], subject=[1], fMin=[1], fMax=[24], session=[2, 3, 4])
+params = Parameters(True, bdd=['bi2014b'], condition=['Target'], tmin=[0.0],
+                    tmax=[1], resampling=[None],
+                    pair=[1], fMin=[1], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
 
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012, params, store)
@@ -408,11 +391,11 @@ params = Parameters(True, condition=['Target'], tmin=[0],
 #     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
 # scr = classify2013(dataset_2013, params, store)
 
-dataset_2014a = BrainInvaders2014a()
-scr = classify2014a(dataset_2014a, params, store)
+# dataset_2014a = BrainInvaders2014a()
+# scr = classify2014a(dataset_2014a, params, store)
 
-# dataset_2014b = BrainInvaders2014b()
-# scr = classify2014b(dataset_2014b)
+dataset_2014b = BrainInvaders2014b()
+scr = classify2014b(dataset_2014b, params, store)
 
 # dataset_2015a = BrainInvaders2015a()
 # scr = classify2015a(dataset_2015a)

@@ -60,6 +60,7 @@ class Parameters():
                   tmax=[0.8], resampling=[None],
                   subject=dataset.subject_list, fMin=[1], fMax=[20])
 
+    # subject/ 1 or 2. Pair = same as subject for other datasets
     def getBi2014b(self, dataset):
         return lz(bdd=['bi2014b'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
@@ -69,4 +70,4 @@ class Parameters():
     def getDefaultBi2014b(self, dataset):
         return lz(bdd=['bi2014b'], condition=['Target'], tmin=[0.0],
                   tmax=[0.8], resampling=[None],
-                  pair=dataset.pair_list, fMin=[0], fMax=[20], subject=[1], xpdesign=['cola', 'solo'])
+                  pair=dataset.pair_list, fMin=[0], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])

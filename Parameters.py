@@ -2,6 +2,24 @@ from LazyProduct import LazyProduct as lz
 import random
 
 
+def __toVariadicArgs__(**args):
+    return args
+
+
+def getDefaultBi2015a():
+    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
+                              tmax=[0.8], resampling=[None],
+                              subject='all', fMin=[1], fMax=[20],
+                              session='all')
+
+
+def getDefaultBi2015b():
+    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
+                              tmax=[0.8], resampling=[None],
+                              subject='all', fMin=[1], fMax=[20],
+                              session='all')
+
+
 class Parameters():
     def __init__(self, useCache, **args):
         self.useCache = useCache
@@ -20,12 +38,24 @@ class Parameters():
             return random.sample(dataset_subjects, int(numberOfsubjects * percent / 100))
         return subject
 
-    def __computeSession__(self):
+    def __computeSession2013__(self):
         session = self.params['session']
         if session == 'all':
             return ['session_1', 'session_2', 'session_3', 'session_4',
                     'session_5', 'session_6', 'session_7', 'session_8']
         return ['session_' + str(x) for x in session]
+
+    def __computeSession2015a__(self):
+        session = self.params['session']
+        if session == 'all':
+            return ['session_1', 'session_2', 'session_3']
+        return ['session_' + str(x) for x in session]
+
+    def __computeSession2015b__(self):
+        session = self.params['session']
+        if session == 'all':
+            return ['s1', 's2', 's3', 's4']
+        return ['s' + str(x) for x in session]
 
     def getBi2012(self, dataset):
         return lz(bdd=['bi2012'], condition=self.params['condition'], tmin=self.params['tmin'],
@@ -41,7 +71,7 @@ class Parameters():
         return lz(bdd=['bi2013'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
-                  session=self.__computeSession__())
+                  session=self.__computeSession2013__())
 
     def getDefaultBi2013(self, dataset):
         return lz(bdd=['bi2013'], condition='Target', tmin=[0.0],
@@ -71,3 +101,15 @@ class Parameters():
         return lz(bdd=['bi2014b'], condition=['Target'], tmin=[0.0],
                   tmax=[0.8], resampling=[None],
                   pair=dataset.pair_list, fMin=[0], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
+
+    def getBi2015a(self, dataset):
+        return lz(bdd=['bi2015a'], condition=self.params['condition'], tmin=self.params['tmin'],
+                  tmax=self.params['tmax'], resampling=self.params['resampling'],
+                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  session=self.__computeSession2015a__())
+
+    def getBi2015b(self, dataset):
+        return lz(bdd=['bi2015b'], condition=self.params['condition'], tmin=self.params['tmin'],
+                  tmax=self.params['tmax'], resampling=self.params['resampling'],
+                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  session=self.__computeSession2015b__())

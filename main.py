@@ -29,7 +29,7 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters
+from Parameters import Parameters, getDefaultBi2015a
 from Store import Store
 
 import warnings
@@ -212,32 +212,28 @@ def classify2014b(dataset, params, store):
     return scores
 
 
-def classify2015a(dataset):
+def classify2015a(dataset, params, store):
     scr = {}
 
     # note that subject 31 at session 3 has a few samples which are 'nan'
     # to avoid this problem it could be preferable to dropped the epochs having this condition
 
-    # load data
-    for subject in [1]:
+    for lz in params.getBi2015a(dataset):
 
-        print('running subject', subject)
-        sessions = getData(dataset, subject)
-        scr[subject] = {}
+        print('running', lz)
+        sessions = getData(dataset, lz.subject)
 
-        for session in sessions.keys():
+        raw = sessions[lz.session]['run_1']
 
-            print('session', session)
-            raw = sessions[session]['run_1']
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
 
-            baseFilter(raw, 1, 24)
+        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
-            events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
+        # get trials and labels
+        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-            # get trials and labels
-            X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
-
-            scr[subject][session] = crossValidationERP(X, y)
+        scr[str(lz)] = useStore(params, store, lz, crossValidationERP,
+                                X, y, lz.condition)
 
     return scr
 
@@ -380,10 +376,6 @@ def classifyPHMDML(dataset):
 
 store = Store()
 
-params = Parameters(True, bdd=['bi2014b'], condition=['Target'], tmin=[0.0],
-                    tmax=[1], resampling=[None],
-                    pair=[1], fMin=[1], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
-
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012, params, store)
 
@@ -394,11 +386,18 @@ params = Parameters(True, bdd=['bi2014b'], condition=['Target'], tmin=[0.0],
 # dataset_2014a = BrainInvaders2014a()
 # scr = classify2014a(dataset_2014a, params, store)
 
-dataset_2014b = BrainInvaders2014b()
-scr = classify2014b(dataset_2014b, params, store)
+# dataset_2014b = BrainInvaders2014b()
+# scr = classify2014b(dataset_2014b, params, store)
 
-# dataset_2015a = BrainInvaders2015a()
-# scr = classify2015a(dataset_2015a)
+dataset_2015a = BrainInvaders2015a()
+
+args = getDefaultBi2015a()
+args['subject'] = [1]
+args['session'] = [1]
+params = Parameters(True, **args)
+
+scr = classify2015a(dataset_2015a, params, store)
+
 
 # dataset_2015b = BrainInvaders2015b()
 # scr = classify2015b(dataset_2015b)

@@ -29,7 +29,7 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters, getDefaultBi2015a
+from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b
 from Store import Store
 
 import warnings
@@ -238,38 +238,32 @@ def classify2015a(dataset, params, store):
     return scr
 
 
-def classify2015b(dataset):
+def classify2015b(dataset, params, store):
     scores = {}
-    for pair in [1]:
-        scores[pair] = {}
 
-        print('pair', str(pair))
+    for lz in params.getBi2015b(dataset):
 
-        sessions = dataset._get_single_pair_data(pair=pair)
-        for session_name in sessions.keys():
+        print('running', str(lz))
 
-            print('session', session_name)
-            scores[pair][session_name] = {}
+        sessions = dataset._get_single_pair_data(pair=lz.pair)
 
-            raw = sessions[session_name]['run_1']
+        raw = sessions[lz.session]['run_1']
 
-            for subject in [1, 2]:
+        pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
+                                     32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
 
-                if subject == 1:
-                    pick_channels = raw.ch_names[0:32] + [raw.ch_names[-1]]
-                elif subject == 2:
-                    pick_channels = raw.ch_names[32:-1] + [raw.ch_names[-1]]
+        raw = raw.copy().pick_channels(pick_channels)
 
-                raw_subject = raw.copy().pick_channels(pick_channels)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
 
-                baseFilter(raw, 1, 20)
+        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
-                events, epochs = epoching(raw, 1, 2, 0.0, 0.8)
-
-                # get trials and labels
-                X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
-
-                scores[pair][session_name][subject] = crossValidationERP(X, y)
+        # get trials and labels
+        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
+        y = epochs.events[:, -1]
+        y = y - 1
+        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
+                                   X, y, lz.condition)
 
     return scores
 
@@ -389,18 +383,18 @@ store = Store()
 # dataset_2014b = BrainInvaders2014b()
 # scr = classify2014b(dataset_2014b, params, store)
 
-dataset_2015a = BrainInvaders2015a()
+# dataset_2015a = BrainInvaders2015a()
+# scr = classify2015a(dataset_2015a, params, store)
 
-args = getDefaultBi2015a()
+dataset_2015b = BrainInvaders2015b()
+
+args = getDefaultBi2015b()
 args['subject'] = [1]
+args['pair'] = [1]
 args['session'] = [1]
 params = Parameters(True, **args)
 
-scr = classify2015a(dataset_2015a, params, store)
-
-
-# dataset_2015b = BrainInvaders2015b()
-# scr = classify2015b(dataset_2015b)
+scr = classify2015b(dataset_2015b, params, store)
 
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves)

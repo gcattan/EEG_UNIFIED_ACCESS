@@ -16,8 +16,8 @@ def getDefaultBi2015a():
 def getDefaultBi2015b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
                               tmax=[0.8], resampling=[None],
-                              subject='all', fMin=[1], fMax=[20],
-                              session='all')
+                              subject=[1, 2], fMin=[1], fMax=[20],
+                              session='all', pair='all')
 
 
 class Parameters():
@@ -27,7 +27,10 @@ class Parameters():
 
     def __computeSubjects__(self, dataset):
         dataset_subjects = dataset.subject_list
-        subject = self.params['subject']
+        if 'pair' in self.params:
+            subject = self.params['pair']
+        else:
+            subject = self.params['subject']
         if subject == 'all':
             return dataset_subjects
         if type(subject) is int:
@@ -111,5 +114,5 @@ class Parameters():
     def getBi2015b(self, dataset):
         return lz(bdd=['bi2015b'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
-                  session=self.__computeSession2015b__())
+                  pair=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  session=self.__computeSession2015b__(), subject=self.params['subject'])

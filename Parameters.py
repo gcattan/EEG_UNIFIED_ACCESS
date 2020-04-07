@@ -15,9 +15,15 @@ def getDefaultBi2015a():
 
 def getDefaultBi2015b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[None],
+                              tmax=[0.8], resampling=[128],
                               subject=[1, 2], fMin=[1], fMax=[20],
                               session='all', pair='all')
+
+
+def getDefaultAlpha():
+    return __toVariadicArgs__(bdd=['alpha'], condition=['closed'], tmin=[2.0],
+                              tmax=[8.0], resampling=[None],
+                              subject='all', fMin=[3], fMax=[40])
 
 
 class Parameters():
@@ -116,3 +122,8 @@ class Parameters():
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   pair=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
                   session=self.__computeSession2015b__(), subject=self.params['subject'])
+
+    def getAlpha(self, dataset):
+        return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
+                  tmax=self.params['tmax'], resampling=self.params['resampling'],
+                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])

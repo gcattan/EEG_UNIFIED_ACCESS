@@ -29,7 +29,7 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b
+from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha
 from Store import Store
 
 import warnings
@@ -57,14 +57,14 @@ def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name='NonTarget', 
 # cross validation
 
 
-def crossValidationERP(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2},):
+def crossValidationERP(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2}):
     skf = StratifiedKFold(n_splits=5)
     clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[
-                        ClassInfo[ClassName]]), MDM())  # TODO Fix classes=[1]
+                        ClassInfo[ClassName]]), MDM())
     return cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
 
 
-def crossValidation(X, y):
+def crossValidation(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2}):
     skf = StratifiedKFold(n_splits=5)
     clf = make_pipeline(Covariances(estimator='lwf'), MDM())
     return cross_val_score(clf, X, y, cv=skf).mean()
@@ -268,20 +268,23 @@ def classify2015b(dataset, params, store):
     return scores
 
 
-def classifyAlphaWaves(dataset):
+def classifyAlphaWaves(dataset, params, store):
     scr = {}
-    for subject in dataset.subject_list[0:2]:
-        print('subject', subject)
-        raw = getData(dataset, subject)
+    for lz in params.getAlpha(dataset):
+        print('running', lz)
+        raw = getData(dataset, lz.subject)
 
-        baseFilter(raw, 3, 40, 128)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
 
-        events, epochs = epoching(raw, 1, 2, 2.0, 8.0, 'closed', 'open')
+        conditions = {'closed': 1, 'open': 2}
+        events, epochs, _ = epoching(
+            raw, conditions['closed'], conditions['open'], lz.tmin, lz.tmax, 'closed', 'open')
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events)
 
-        scr[subject] = crossValidation(X, y)
+        scr[str(lz)] = useStore(params, store, lz, crossValidation,
+                                X, y, lz.condition, conditions)
 
     return scr
 
@@ -370,6 +373,10 @@ def classifyPHMDML(dataset):
 
 store = Store()
 
+args = getDefaultAlpha()
+args['subject'] = [1]
+params = Parameters(True, **args)
+
 # dataset_2012 = BrainInvaders2012(Training=True)
 # scr = classify2012(dataset_2012, params, store)
 
@@ -386,18 +393,11 @@ store = Store()
 # dataset_2015a = BrainInvaders2015a()
 # scr = classify2015a(dataset_2015a, params, store)
 
-dataset_2015b = BrainInvaders2015b()
+# dataset_2015b = BrainInvaders2015b()
+# scr = classify2015b(dataset_2015b, params, store)
 
-args = getDefaultBi2015b()
-args['subject'] = [1]
-args['pair'] = [1]
-args['session'] = [1]
-params = Parameters(True, **args)
-
-scr = classify2015b(dataset_2015b, params, store)
-
-# dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
-# scr = classifyAlphaWaves(dataset_alphaWaves)
+dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
+scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
 
 # dataset_VR = VirtualReality(useMontagePosition=False)
 # scr = classifyVR(dataset_VR)

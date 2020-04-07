@@ -29,7 +29,7 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha
+from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha, getDefaultPHMD
 from Store import Store
 
 import warnings
@@ -346,27 +346,29 @@ def classifyVR(dataset):
     return df
 
 
-def classifyPHMDML(dataset):
+def classifyPHMDML(dataset, params, store):
 
     scr = {}
-    subject = 1
-    for subject in [1]:
+    for lz in params.getPHMD(dataset):
 
-        print('subject', subject)
+        print('running', lz)
         # get the raw object with signals from the subject (data will be downloaded if necessary)
-        raw = getData(dataset, subject)
-        baseFilter(raw, 1, 35, 128)
+        raw = getData(dataset, lz.subject)
+        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
 
         dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
         # cut the signals into epochs and get the labels associated to each trial
-        events, epochs, event_id = epoching(raw, 1, 2, 10, 50, 'OFF', 'ON')
+        conditions = {'OFF': 1, 'ON': 2}
+        events, epochs, event_id = epoching(
+            raw, conditions['OFF'], conditions['ON'], lz.tmin, lz.tmax, 'OFF', 'ON')
 
         X = epochs.get_data()
         inv_events = {k: v for v, k in event_id.items()}
-        labels = np.array([inv_events[e] for e in epochs.events[:, -1]])
+        y = np.array([inv_events[e] for e in epochs.events[:, -1]])
 
-        scr[subject] = crossValidation(X, labels)
+        scr[str(lz)] = useStore(params, store, lz, crossValidation,
+                                X, y, lz.condition, conditions)
 
     return scr
 
@@ -396,14 +398,14 @@ params = Parameters(True, **args)
 # dataset_2015b = BrainInvaders2015b()
 # scr = classify2015b(dataset_2015b, params, store)
 
-dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
-scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
+# dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
+# scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
 
 # dataset_VR = VirtualReality(useMontagePosition=False)
 # scr = classifyVR(dataset_VR)
 
-# dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
-# scr = classifyPHMDML(dataset_PHMDML)
+dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
+scr = classifyPHMDML(dataset_PHMDML, params, store)
 
 store.save()
 

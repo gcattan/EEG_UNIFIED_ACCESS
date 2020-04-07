@@ -26,6 +26,12 @@ def getDefaultAlpha():
                               subject='all', fMin=[3], fMax=[40])
 
 
+def getDefaultPHMD():
+    return __toVariadicArgs__(bdd=['alpha'], condition=['closed'], tmin=[10],
+                              tmax=[50], resampling=[128],
+                              subject='all', fMin=[1], fMax=[35])
+
+
 class Parameters():
     def __init__(self, useCache, **args):
         self.useCache = useCache
@@ -124,6 +130,11 @@ class Parameters():
                   session=self.__computeSession2015b__(), subject=self.params['subject'])
 
     def getAlpha(self, dataset):
+        return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
+                  tmax=self.params['tmax'], resampling=self.params['resampling'],
+                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+
+    def getPHMD(self, dataset):
         return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])

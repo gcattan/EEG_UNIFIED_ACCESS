@@ -1,4 +1,6 @@
 from LazyProduct import LazyProduct as lz
+from sklearn.model_selection import KFold
+import numpy as np
 import random
 
 
@@ -30,6 +32,13 @@ def getDefaultPHMD():
     return __toVariadicArgs__(bdd=['alpha'], condition=['closed'], tmin=[10],
                               tmax=[50], resampling=[128],
                               subject='all', fMin=[1], fMax=[35])
+
+
+def getDefaultVR():
+    return __toVariadicArgs__(bdd=['VR'], condition=['VR'], tmin=[0.0],
+                              tmax=[1.0], resampling=[None],
+                              subject='all', fMin=[1], fMax=[24],
+                              repetitions=[[1, 2]], train_percent='80')
 
 
 class Parameters():
@@ -138,3 +147,9 @@ class Parameters():
         return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+
+    def getVR(self, dataset):
+        return lz(bdd=['VR'], condition=self.params['condition'], tmin=self.params['tmin'],
+                  tmax=self.params['tmax'], resampling=self.params['resampling'],
+                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  repetitions=self.params['repetitions'], train_percent='80')

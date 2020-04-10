@@ -29,7 +29,7 @@ from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha, getDefaultPHMD
+from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha, getDefaultPHMD, getDefaultVR
 from Store import Store
 
 import warnings
@@ -289,61 +289,42 @@ def classifyAlphaWaves(dataset, params, store):
     return scr
 
 
-def classifyVR(dataset):
+def classifyVR(dataset, params, stores):
     # get the paradigm
     paradigm = P300()
 
-    # loop to get scores for each subject
-    nsubjects = 1
+    scr = {}
+    for lz in params.getVR(dataset):
+        print('running', lz)
+        paradigm.tmax = lz.tmax
+        paradigm.tmin = lz.tmin
+        paradigm.fmin = lz.fMin
+        paradigm.fmax = lz.fMax
+        paradigm.resample = lz.resampling
 
-    df = {}
-    for tmax in [0.2, 0.3]:
-        print('tmax', tmax)
-        paradigm.tmax = tmax
+        # define the dataset instance
+        dataset.VR = True if lz.condition is 'VR' else False
+        dataset.PC = True if lz.condition is 'PC' else False
 
-        scores = []
-        for subject in dataset.subject_list[:nsubjects]:
-            print('subject', subject)
+        # get the epochs and labels
+        X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
+        labels = LabelEncoder().fit_transform(labels)
 
-            scores_subject = [subject]
-            for condition in ['VR', 'PC']:
-                print('condition', condition)
+        # kf = KFold(n_splits=6)
 
-                # define the dataset instance
-                dataset.VR = True if condition is 'VR' else False
-                dataset.PC = True if condition is 'PC' else False
+        blocks = np.arange(1, 13)
+        # for train_idx, test_idx in kf.split(np.arange(12)):
 
-                # get the epochs and labels
-                X, labels, meta = paradigm.get_data(
-                    dataset, subjects=[subject])
-                labels = LabelEncoder().fit_transform(labels)
+        # split in training and testing blocks
+        X_training, labels_training, _ = get_block_repetition(
+            X, labels, meta, blocks[lz.train_idx], lz.repetitions)
+        X_test, labels_test, _ = get_block_repetition(
+            X, labels, meta, blocks[lz.test_idx], lz.repetitions)
 
-                kf = KFold(n_splits=6)
-                repetitions = [1, 2]
-                auc = []
+        scr[str(lz)] = useStore(params, store, lz, crossValidation,
+                                X_training, labels_training, X_test, labels_test)
 
-                blocks = np.arange(1, 13)
-                for train_idx, test_idx in kf.split(np.arange(12)):
-
-                    # split in training and testing blocks
-                    X_training, labels_training, _ = get_block_repetition(
-                        X, labels, meta, blocks[train_idx], repetitions)
-                    X_test, labels_test, _ = get_block_repetition(
-                        X, labels, meta, blocks[test_idx], repetitions)
-
-                    val = crossValidationVR(
-                        X_training, labels_training, X_test, labels_test)
-                    auc.append(val)
-
-                # stock scores
-                scores_subject.append(np.mean(auc))
-
-            scores.append(scores_subject)
-
-        # print results
-        df[tmax] = pd.DataFrame(scores, columns=['subject', 'VR', 'PC'])
-
-    return df
+    return scr
 
 
 def classifyPHMDML(dataset, params, store):
@@ -375,8 +356,8 @@ def classifyPHMDML(dataset, params, store):
 
 store = Store()
 
-args = getDefaultAlpha()
-args['subject'] = [1]
+args = getDefaultVR()
+# args['subject'] = [1]
 params = Parameters(True, **args)
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -401,11 +382,11 @@ params = Parameters(True, **args)
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
 
-# dataset_VR = VirtualReality(useMontagePosition=False)
-# scr = classifyVR(dataset_VR)
+dataset_VR = VirtualReality(useMontagePosition=False)
+scr = classifyVR(dataset_VR, params, store)
 
-dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
-scr = classifyPHMDML(dataset_PHMDML, params, store)
+# dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
+# scr = classifyPHMDML(dataset_PHMDML, params, store)
 
 store.save()
 

@@ -79,7 +79,7 @@ def classify2012(dataset, params, store):
         data = getData(dataset, lz.subject)
         raw = data['session_1']['run_training']
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
         events, epochs, _ = epoching(
             raw, 1, 2, lz.tmin, lz.tmax)
 
@@ -107,7 +107,7 @@ def classify2013(dataset, params, store):
 
         raw = data[lz.session]['run_3']
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
         events, epochs, _ = epoching(raw, 33286, 33285, lz.tmin, lz.tmax)
 
@@ -132,7 +132,7 @@ def classify2014a(dataset, params, store):
         sessions = getData(dataset, lz.subject)
         raw = sessions['session_1']['run_1']
 
-        baseFilter(raw, lz.fMin, lz.fMax)
+        baseFilter(raw, lz.fmin, lz.fmax)
         events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
         # get trials and labels
@@ -163,7 +163,7 @@ def classify2014b(dataset, params, store):
 
         raw = raw.copy().pick_channels(pick_channels)
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
         events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
         # get trials and labels
@@ -188,7 +188,7 @@ def classify2015a(dataset, params, store):
 
         raw = sessions[lz.session]['run_1']
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
         events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
@@ -217,7 +217,7 @@ def classify2015b(dataset, params, store):
 
         raw = raw.copy().pick_channels(pick_channels)
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
         events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
 
@@ -237,7 +237,7 @@ def classifyAlphaWaves(dataset, params, store):
         print('running', lz)
         raw = getData(dataset, lz.subject)
 
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
         conditions = {'closed': 1, 'open': 2}
         events, epochs, _ = epoching(
@@ -261,9 +261,9 @@ def classifyVR(dataset, params, stores):
         print('running', lz)
         paradigm.tmax = lz.tmax
         paradigm.tmin = lz.tmin
-        paradigm.fmin = lz.fMin
-        paradigm.fmax = lz.fMax
-        paradigm.resample = lz.resampling
+        paradigm.fmin = lz.fmin
+        paradigm.fmax = lz.fmax
+        paradigm.resample = lz.fs
 
         # define the dataset instance
         dataset.VR = True if lz.condition is 'VR' else False
@@ -293,7 +293,7 @@ def classifyPHMDML(dataset, params, store):
         print('running', lz)
         # get the raw object with signals from the subject (data will be downloaded if necessary)
         raw = getData(dataset, lz.subject)
-        baseFilter(raw, lz.fMin, lz.fMax, lz.resampling)
+        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
         dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 

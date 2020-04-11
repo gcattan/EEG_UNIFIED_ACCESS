@@ -10,59 +10,59 @@ def __toVariadicArgs__(**args):
 
 def getDefaultBi2012():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[1.0], resampling=[None],
-                              subject='all', fMin=[1], fMax=[24])
+                              tmax=[1.0], fs=[None],
+                              subject='all', fmin=[1], fmax=[24])
 
 
 def getDefaultBi2013():
     return __toVariadicArgs__(condition='Target', tmin=[0.0],
-                              tmax=[1.0], resampling=[None],
-                              subject='all', fMin=[1], fMax=[24],
+                              tmax=[1.0], fs=[None],
+                              subject='all', fmin=[1], fmax=[24],
                               session='all')
 
 
 def getDefaultBi2014a():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[None],
-                              subject='all', fMin=[1], fMax=[20])
+                              tmax=[0.8], fs=[None],
+                              subject='all', fmin=[1], fmax=[20])
 
 
 def getDefaultBi2014b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[None],
-                              pair='all', fMin=[1], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
+                              tmax=[0.8], fs=[None],
+                              pair='all', fmin=[1], fmax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
 
 
 def getDefaultBi2015a():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[None],
-                              subject='all', fMin=[1], fMax=[24],
+                              tmax=[0.8], fs=[None],
+                              subject='all', fmin=[1], fmax=[24],
                               session='all')
 
 
 def getDefaultBi2015b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[None],
-                              subject=[1, 2], fMin=[1], fMax=[20],
+                              tmax=[0.8], fs=[None],
+                              subject=[1, 2], fmin=[1], fmax=[20],
                               session='all', pair='all')
 
 
 def getDefaultAlpha():
     return __toVariadicArgs__(condition=['closed'], tmin=[2.0],
-                              tmax=[8.0], resampling=[128],
-                              subject='all', fMin=[3], fMax=[40])
+                              tmax=[8.0], fs=[128],
+                              subject='all', fmin=[3], fmax=[40])
 
 
 def getDefaultPHMD():
     return __toVariadicArgs__(condition=['OFF'], tmin=[10],
-                              tmax=[50], resampling=[128],
-                              subject='all', fMin=[1], fMax=[35])
+                              tmax=[50], fs=[128],
+                              subject='all', fmin=[1], fmax=[35])
 
 
 def getDefaultVR():
     return __toVariadicArgs__(condition=['VR'], tmin=[0.0],
-                              tmax=[1.0], resampling=[None],
-                              subject='all', fMin=[1], fMax=[24],
+                              tmax=[1.0], fs=[None],
+                              subject='all', fmin=[1], fmax=[24],
                               repetitions=[[1, 2]], nsplits=[6])
 
 
@@ -119,52 +119,52 @@ class Parameters():
 
     def getBi2012(self, dataset):
         return lz(bdd=['bi2012'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def getBi2013(self, dataset):
         return lz(bdd=['bi2013'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
                   session=self.__computeSession2013__())
 
     def getBi2014a(self, dataset):
         return lz(bdd=['bi2014a'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     # subject/ 1 or 2. Pair = same as subject for other datasets
     def getBi2014b(self, dataset):
         return lz(bdd=['bi2014b'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  pair=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  pair=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
                   subject=self.params['subject'], xpdesign=['cola', 'solo'])
 
     def getBi2015a(self, dataset):
         return lz(bdd=['bi2015a'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
                   session=self.__computeSession2015a__())
 
     def getBi2015b(self, dataset):
         return lz(bdd=['bi2015b'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  pair=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  pair=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
                   session=self.__computeSession2015b__(), subject=self.params['subject'])
 
     def getAlpha(self, dataset):
         return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def getPHMD(self, dataset):
         return lz(bdd=['PHMD'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def getVR(self, dataset):
         self.__computeTrainAndTest__()
         return lz(bdd=['VR'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], resampling=self.params['resampling'],
-                  subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
+                  tmax=self.params['tmax'], fs=self.params['fs'],
+                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
                   repetitions=self.params['repetitions'], subset=self.params['subset'])

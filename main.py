@@ -16,20 +16,13 @@ from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
 from virtualreality.utilities import get_block_repetition
 from moabb.paradigms import P300
+from crossvalidation import *
 
-from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import StratifiedKFold, cross_val_score, KFold
-from sklearn.preprocessing import LabelEncoder
-from sklearn.externals import joblib
-from sklearn.metrics import roc_auc_score
 
-from pyriemann.classification import MDM
-from pyriemann.estimation import ERPCovariances, Covariances
-from tqdm import tqdm
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import Parameters, getDefaultBi2015a, getDefaultBi2015b, getDefaultAlpha, getDefaultPHMD, getDefaultVR
+from Parameters import *
 from Store import Store
 
 import warnings
@@ -53,36 +46,6 @@ def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name='NonTarget', 
                         tmax=tmax, baseline=None, verbose=False, preload=True)
     epochs.pick_types(eeg=True)
     return (events, epochs, event_id)
-
-# cross validation
-
-
-def crossValidationERP(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2}):
-    skf = StratifiedKFold(n_splits=5)
-    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[
-                        ClassInfo[ClassName]]), MDM())
-    return cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
-
-
-def crossValidation(X, y, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 2}):
-    skf = StratifiedKFold(n_splits=5)
-    clf = make_pipeline(Covariances(estimator='lwf'), MDM())
-    return cross_val_score(clf, X, y, cv=skf).mean()
-
-
-def crossValidationVR(X_training, labels_training, X_test, labels_test, ClassName='Target', ClassInfo={'Target': 1, 'NonTarget': 0}):
-    # estimate the extended ERP covariance matrices with Xdawn
-    # dict_labels = {'Target':1, 'NonTarget':0}
-    erpc = ERPCovariances(classes=[ClassInfo[ClassName]], estimator='lwf')
-    erpc.fit(X_training, labels_training)
-    covs_training = erpc.transform(X_training)
-    covs_test = erpc.transform(X_test)
-
-    # get the AUC for the classification
-    clf = MDM()
-    clf.fit(covs_training, labels_training)
-    labels_pred = clf.predict(covs_test)
-    return roc_auc_score(labels_test, labels_pred)
 
 
 def getData(dataset, subject):
@@ -352,7 +315,6 @@ def classifyPHMDML(dataset, params, store):
 store = Store()
 
 args = getDefaultVR()
-args['subject'] = [1]
 params = Parameters(True, **args)
 
 # dataset_2012 = BrainInvaders2012(Training=True)

@@ -15,7 +15,7 @@ def getDefaultBi2012():
 
 
 def getDefaultBi2013():
-    return __toVariadicArgs__(bdd='all', condition='Target', tmin=[0.0],
+    return __toVariadicArgs__(condition='Target', tmin=[0.0],
                               tmax=[1.0], resampling=[None],
                               subject='all', fMin=[1], fMax=[24],
                               session='all')
@@ -30,31 +30,31 @@ def getDefaultBi2014a():
 def getDefaultBi2014b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
                               tmax=[0.8], resampling=[None],
-                              pair='all', fMin=[0], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
+                              pair='all', fMin=[1], fMax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
 
 
 def getDefaultBi2015a():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
                               tmax=[0.8], resampling=[None],
-                              subject='all', fMin=[1], fMax=[20],
+                              subject='all', fMin=[1], fMax=[24],
                               session='all')
 
 
 def getDefaultBi2015b():
     return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], resampling=[128],
+                              tmax=[0.8], resampling=[None],
                               subject=[1, 2], fMin=[1], fMax=[20],
                               session='all', pair='all')
 
 
 def getDefaultAlpha():
     return __toVariadicArgs__(condition=['closed'], tmin=[2.0],
-                              tmax=[8.0], resampling=[None],
+                              tmax=[8.0], resampling=[128],
                               subject='all', fMin=[3], fMax=[40])
 
 
 def getDefaultPHMD():
-    return __toVariadicArgs__(condition=['closed'], tmin=[10],
+    return __toVariadicArgs__(condition=['OFF'], tmin=[10],
                               tmax=[50], resampling=[128],
                               subject='all', fMin=[1], fMax=[35])
 

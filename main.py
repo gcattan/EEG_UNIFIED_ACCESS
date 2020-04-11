@@ -22,8 +22,8 @@ from crossvalidation import *
 import numpy as np
 import mne
 import pandas as pd
-from Parameters import *
-from Store import Store
+from parameters import *
+from store import Store
 
 import warnings
 warnings.filterwarnings("ignore")

@@ -8,42 +8,42 @@ def __toVariadicArgs__(**args):
     return args
 
 
+t0_100 = __toVariadicArgs__(tmin=[0.0], tmax=[1.0])
+t10_80 = __toVariadicArgs__(tmin=[0.0], tmax=[0.8])
+f1_24 = __toVariadicArgs__(fmin=[1], fmax=[24])
+f1_20 = __toVariadicArgs__(fmin=[1], fmax=[20])
+
+
 def getDefaultBi2012():
-    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[1.0], fs=[None],
-                              subject='all', fmin=[1], fmax=[24])
+    return __toVariadicArgs__(condition=['Target'], **t0_100, fs=[None],
+                              subject='all', **f1_24)
 
 
 def getDefaultBi2013():
-    return __toVariadicArgs__(condition='Target', tmin=[0.0],
-                              tmax=[1.0], fs=[None],
-                              subject='all', fmin=[1], fmax=[24],
+    return __toVariadicArgs__(condition='Target', **t0_100, fs=[None],
+                              subject='all', **f1_24,
                               session='all')
 
 
 def getDefaultBi2014a():
-    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], fs=[None],
-                              subject='all', fmin=[1], fmax=[20])
+    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
+                              subject='all', **f1_20)
 
 
 def getDefaultBi2014b():
-    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], fs=[None],
-                              pair='all', fmin=[1], fmax=[20], subject=[1, 2], xpdesign=['cola', 'solo'])
+    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
+                              pair='all', **f1_20, subject=[1, 2], xpdesign=['cola', 'solo'])
 
 
 def getDefaultBi2015a():
-    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], fs=[None],
-                              subject='all', fmin=[1], fmax=[24],
+    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
+                              subject='all', **f1_24,
                               session='all')
 
 
 def getDefaultBi2015b():
-    return __toVariadicArgs__(condition=['Target'], tmin=[0.0],
-                              tmax=[0.8], fs=[None],
-                              subject=[1, 2], fmin=[1], fmax=[20],
+    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
+                              subject=[1, 2], **f1_20,
                               session='all', pair='all')
 
 
@@ -60,10 +60,9 @@ def getDefaultPHMD():
 
 
 def getDefaultVR():
-    return __toVariadicArgs__(condition=['VR'], tmin=[0.0],
-                              tmax=[1.0], fs=[None],
+    return __toVariadicArgs__(condition=['VR'], fs=[None],
                               subject='all', fmin=[1], fmax=[24],
-                              repetitions=[[1, 2]], nsplits=[6])
+                              repetitions=[[1, 2]], nsplits=[6], **t0_100)
 
 
 class Parameters():

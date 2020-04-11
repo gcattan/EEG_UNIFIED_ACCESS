@@ -38,7 +38,7 @@ def getDefaultVR():
     return __toVariadicArgs__(bdd=['VR'], condition=['VR'], tmin=[0.0],
                               tmax=[1.0], resampling=[None],
                               subject='all', fMin=[1], fMax=[24],
-                              repetitions=[[1, 2]], train_percent='80')
+                              repetitions=[[1, 2]], nsplits=[6])
 
 
 class Parameters():
@@ -80,6 +80,17 @@ class Parameters():
         if session == 'all':
             return ['s1', 's2', 's3', 's4']
         return ['s' + str(x) for x in session]
+
+    def __computeTrainAndTest__(self):
+        subset = []
+        blocks = np.arange(1, 13)
+        indexes = np.arange(12)
+        for n in self.params['nsplits']:
+            kf = KFold(n_splits=n)
+            for train_idx, test_idx in kf.split(indexes):
+                subset.append(
+                    {'train': blocks[train_idx], 'test': blocks[test_idx]})
+        self.params['subset'] = subset
 
     def getBi2012(self, dataset):
         return lz(bdd=['bi2012'], condition=self.params['condition'], tmin=self.params['tmin'],
@@ -149,7 +160,8 @@ class Parameters():
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'])
 
     def getVR(self, dataset):
+        self.__computeTrainAndTest__()
         return lz(bdd=['VR'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], resampling=self.params['resampling'],
                   subject=self.__computeSubjects__(dataset), fMin=self.params['fMin'], fMax=self.params['fMax'],
-                  repetitions=self.params['repetitions'], train_percent='80')
+                  repetitions=self.params['repetitions'], subset=self.params['subset'])

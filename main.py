@@ -310,16 +310,11 @@ def classifyVR(dataset, params, stores):
         X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
         labels = LabelEncoder().fit_transform(labels)
 
-        # kf = KFold(n_splits=6)
-
-        blocks = np.arange(1, 13)
-        # for train_idx, test_idx in kf.split(np.arange(12)):
-
         # split in training and testing blocks
         X_training, labels_training, _ = get_block_repetition(
-            X, labels, meta, blocks[lz.train_idx], lz.repetitions)
+            X, labels, meta, lz.subset['train'], lz.repetitions)
         X_test, labels_test, _ = get_block_repetition(
-            X, labels, meta, blocks[lz.test_idx], lz.repetitions)
+            X, labels, meta, lz.subset['test'], lz.repetitions)
 
         scr[str(lz)] = useStore(params, store, lz, crossValidation,
                                 X_training, labels_training, X_test, labels_test)
@@ -357,7 +352,7 @@ def classifyPHMDML(dataset, params, store):
 store = Store()
 
 args = getDefaultVR()
-# args['subject'] = [1]
+args['subject'] = [1]
 params = Parameters(True, **args)
 
 # dataset_2012 = BrainInvaders2012(Training=True)

@@ -21,7 +21,7 @@ dwnsplg_high = __toVariadicArgs__(fs=[128])
 
 
 def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
-                   subject='all', fmin=[1], fmax=[24]):
+                   subject='all', fmin=[1], fmax=[24], validation=['crossValidationERP']):
     return locals()
 
 
@@ -116,54 +116,42 @@ class Parameters():
                     {'train': blocks[train_idx], 'test': blocks[test_idx]})
         self.params['subset'] = subset
 
+    def __base__(self, dataset, subject=None):
+        return __toVariadicArgs__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
+                                  fs=self.params['fs'], subject=self.__computeSubjects__(
+                                      dataset),
+                                  fmin=self.params['fmin'], fmax=self.params['fmax'])
+
     def getBi2012(self, dataset):
-        return lz(bdd=['bi2012'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
+        return lz(bdd=['bi2012'], **self.__base__(dataset))
 
     def getBi2013(self, dataset):
-        return lz(bdd=['bi2013'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
+        return lz(bdd=['bi2013'], **self.__base__(dataset),
                   session=self.__computeSession2013__())
 
     def getBi2014a(self, dataset):
-        return lz(bdd=['bi2014a'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
+        return lz(bdd=['bi2014a'], **self.__base__(dataset))
 
     # subject/ 1 or 2. Pair = same as subject for other datasets
     def getBi2014b(self, dataset):
-        return lz(bdd=['bi2014b'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  pair=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
-                  subject=self.params['subject'], xpdesign=['cola', 'solo'])
+        return lz(bdd=['bi2014b'], **self.__base__(dataset, subject=self.params['subject']),
+                  pair=self.__computeSubjects__(dataset), xpdesign=['cola', 'solo'])
 
     def getBi2015a(self, dataset):
-        return lz(bdd=['bi2015a'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
+        return lz(bdd=['bi2015a'], **self.__base__(dataset),
                   session=self.__computeSession2015a__())
 
     def getBi2015b(self, dataset):
-        return lz(bdd=['bi2015b'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  pair=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
-                  session=self.__computeSession2015b__(), subject=self.params['subject'])
+        return lz(bdd=['bi2015b'], **self.__base__(dataset, subject=self.params['subject']),
+                  pair=self.__computeSubjects__(dataset), session=self.__computeSession2015b__())
 
     def getAlpha(self, dataset):
-        return lz(bdd=['alpha'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
+        return lz(bdd=['alpha'], **self.__base__(dataset))
 
     def getPHMD(self, dataset):
-        return lz(bdd=['PHMD'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'])
+        return lz(bdd=['PHMD'], **self.__base__(dataset))
 
     def getVR(self, dataset):
         self.__computeTrainAndTest__()
-        return lz(bdd=['VR'], condition=self.params['condition'], tmin=self.params['tmin'],
-                  tmax=self.params['tmax'], fs=self.params['fs'],
-                  subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
+        return lz(bdd=['VR'], **self.__base__(dataset),
                   repetitions=self.params['repetitions'], subset=self.params['subset'], xpdesign=self.params['xpdesign'])

@@ -29,18 +29,19 @@ import cross_validation
 import warnings
 warnings.filterwarnings("ignore")
 
-classInfo_classic = {'Target': 2, 'NonTarget': 1}
-classInfo_vr = {'Target': 1, 'NonTarget': 0}
-classInfo_alpha = {'closed': 1, 'open': 2}
-classInfo = {'OFF': 1, 'ON': 2}
+class_info_std = {'Target': 2, 'NonTarget': 1}
+class_info_vr = {'Target': 1, 'NonTarget': 0}
+class_info_alpha = {'closed': 1, 'open': 2}
+class_info_phmd = {'OFF': 1, 'ON': 2}
+class_info_2013 = {'Target': 33285, 'NonTarget': 33286}
 
 # filter data and resample
 
 
-def baseFilter(raw, minF, maxF, sfResample=None):
-    raw.filter(minF, maxF, verbose=False)
-    if(not sfResample == None):
-        raw.resample(sfResample, verbose=False)
+def base_filter(raw, minf, max, fs=None):
+    raw.filter(minf, max, verbose=False)
+    if(not fs == None):
+        raw.resample(fs, verbose=False)
 
 # detect the events and cut the signal into epochs
 
@@ -53,110 +54,110 @@ def epoching(raw, tmin, tmax, event_id):
     return (events, epochs)
 
 
-def getData(dataset, subject):
+def get_data(dataset, subject):
     return dataset._get_single_subject_data(subject)
 
 
-def getBaseTrialAndLabel(epochs, events, fixIndex=False):
+def get_base_trial_and_label(epochs, events, fix_index=False):
     y = events[:, -1]
     X = epochs.get_data()
     if(not len(X) == len(y)):
         y = epochs.events[:, -1]
-    return X, y - 1 if fixIndex else y
+    return X, y - 1 if fix_index else y
 
 
-def useStore(params, store, key, validationName, *args):
-    validationMethod = getattr(cross_validation, validationName)
+def use_store(params, store, key, validationName, *args):
+    validation_method = getattr(cross_validation, validationName)
     if params.useCache:
         if key in store:
             ret = store[key]
         else:
-            ret = validationMethod(*args)
+            ret = validation_method(*args)
             store[key] = ret
     else:
-        ret = validationMethod(*args)
+        ret = validation_method(*args)
     return ret
 
 
-def classify2012(dataset, params, store):
+def classify_2012(dataset, params, store):
     scr = {}
 
-    for lz in params.getBi2012(dataset):
+    for lz in params.get_bi2012(dataset):
 
         print('running', lz)
 
-        data = getData(dataset, lz.subject)
+        data = get_data(dataset, lz.subject)
         raw = data['session_1']['run_training']
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
         events, epochs = epoching(
-            raw, lz.tmin, lz.tmax, classInfo_classic)
+            raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events)
+        X, y = get_base_trial_and_label(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        ret = useStore(params, store, lz, lz.validation,
-                       X, y, lz.condition, classInfo_classic)
+        ret = use_store(params, store, lz, lz.validation,
+                        X, y, lz.condition, class_info_std)
 
         scr[str(lz)] = ret
 
     return scr
 
 
-def classify2013(dataset, params, store):
-    classInfo = {'Target': 33285, 'NonTarget': 33286}
+def classify_2013(dataset, params, store):
+
     scores = {}
 
     # get the data from subject of interest
-    for lz in params.getBi2013(dataset):
+    for lz in params.get_bi2013(dataset):
 
         print('running', lz)
 
-        data = getData(dataset, lz.subject)
+        data = get_data(dataset, lz.subject)
 
         raw = data[lz.session]['run_3']
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
         events, epochs = epoching(
-            raw, lz.tmin, lz.tmax, classInfo)
+            raw, lz.tmin, lz.tmax, class_info_2013)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events)
+        X, y = get_base_trial_and_label(epochs, events)
 
-        scores[str(lz)] = useStore(params, store, lz, lz.validation,
-                                   X, y, lz.condition, classInfo)
+        scores[str(lz)] = use_store(params, store, lz, lz.validation,
+                                    X, y, lz.condition, class_info_2013)
 
     return scores
 
 
-def classify2014a(dataset, params, store):
+def classify_2014a(dataset, params, store):
     scr = {}
 
-    for lz in params.getBi2014a(dataset):
+    for lz in params.get_bi2014a(dataset):
 
         # load data
         print('running subject', lz)
-        sessions = getData(dataset, lz.subject)
+        sessions = get_data(dataset, lz.subject)
         raw = sessions['session_1']['run_1']
 
-        baseFilter(raw, lz.fmin, lz.fmax)
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
+        base_filter(raw, lz.fmin, lz.fmax)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
+        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
 
-        scr[str(lz)] = useStore(params, store, lz, lz.validation,
-                                X, y, lz.condition, classInfo_classic)
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X, y, lz.condition, class_info_std)
 
     return scr
 
 
-def classify2014b(dataset, params, store):
+def classify_2014b(dataset, params, store):
     scores = {}
 
-    for lz in params.getBi2014b(dataset):
+    for lz in params.get_bi2014b(dataset):
 
         print('running pair', lz)
 
@@ -172,49 +173,49 @@ def classify2014b(dataset, params, store):
 
         raw = raw.copy().pick_channels(pick_channels)
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
+        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
 
-        scores[str(lz)] = useStore(params, store, lz, lz.validation,
-                                   X, y, lz.condition, classInfo_classic)
+        scores[str(lz)] = use_store(params, store, lz, lz.validation,
+                                    X, y, lz.condition, class_info_std)
 
     return scores
 
 
-def classify2015a(dataset, params, store):
+def classify_2015a(dataset, params, store):
 
     scr = {}
 
     # note that subject 31 at session 3 has a few samples which are 'nan'
     # to avoid this problem it could be preferable to dropped the epochs having this condition
 
-    for lz in params.getBi2015a(dataset):
+    for lz in params.get_bi2015a(dataset):
 
         print('running', lz)
-        sessions = getData(dataset, lz.subject)
+        sessions = get_data(dataset, lz.subject)
 
         raw = sessions[lz.session]['run_1']
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
+        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
 
-        scr[str(lz)] = useStore(params, store, lz, lz.validation,
-                                X, y, lz.condition, classInfo_classic)
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X, y, lz.condition, class_info_std)
 
     return scr
 
 
-def classify2015b(dataset, params, store):
+def classify_2015b(dataset, params, store):
     scores = {}
 
-    for lz in params.getBi2015b(dataset):
+    for lz in params.get_bi2015b(dataset):
 
         print('running', str(lz))
 
@@ -227,43 +228,43 @@ def classify2015b(dataset, params, store):
 
         raw = raw.copy().pick_channels(pick_channels)
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
+        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
 
-        scores[str(lz)] = useStore(params, store, lz, lz.validation,
-                                   X, y, lz.condition, classInfo_classic)
+        scores[str(lz)] = use_store(params, store, lz, lz.validation,
+                                    X, y, lz.condition, class_info_std)
 
     return scores
 
 
-def classifyAlphaWaves(dataset, params, store):
+def classify_alpha(dataset, params, store):
     scr = {}
-    for lz in params.getAlpha(dataset):
+    for lz in params.get_alpha(dataset):
         print('running', lz)
-        raw = getData(dataset, lz.subject)
+        raw = get_data(dataset, lz.subject)
 
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_alpha)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_alpha)
 
         # get trials and labels
-        X, y = getBaseTrialAndLabel(epochs, events)
+        X, y = get_base_trial_and_label(epochs, events)
 
-        scr[str(lz)] = useStore(params, store, lz, lz.validation,
-                                X, y, lz.condition, conditions, classInfo_alpha)
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X, y, lz.condition, conditions, class_info_alpha)
 
     return scr
 
 
-def classifyVR(dataset, params, stores):
+def classify_vr(dataset, params, stores):
     # get the paradigm
     paradigm = P300()
     scr = {}
-    for lz in params.getVR(dataset):
+    for lz in params.get_vr(dataset):
         print('running', lz)
         paradigm.tmax = lz.tmax
         paradigm.tmin = lz.tmin
@@ -285,41 +286,41 @@ def classifyVR(dataset, params, stores):
         X_test, labels_test, _ = get_block_repetition(
             X, labels, meta, lz.subset['test'], lz.repetitions)
 
-        scr[str(lz)] = useStore(params, store, lz, lz.validation,
-                                X_training, labels_training, X_test, labels_test, lz.condition, classInfo_vr)
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X_training, labels_training, X_test, labels_test, lz.condition, class_info_vr)
 
     return scr
 
 
-def classifyPHMDML(dataset, params, store):
+def classify_phmd(dataset, params, store):
 
     scr = {}
-    for lz in params.getPHMD(dataset):
+    for lz in params.get_phmd(dataset):
 
         print('running', lz)
         # get the raw object with signals from the subject (data will be downloaded if necessary)
-        raw = getData(dataset, lz.subject)
-        baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
+        raw = get_data(dataset, lz.subject)
+        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
         dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
         # cut the signals into epochs and get the labels associated to each trial
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_phmd)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_phmd)
 
         X = epochs.get_data()
         inv_events = {k: v for v, k in classInfo.items()}
         y = np.array([inv_events[e] for e in epochs.events[:, -1]])
 
-        scr[str(lz)] = useStore(params, store, lz, lz.validation,
-                                X, y, lz.condition, classInfo_phmd)
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X, y, lz.condition, class_info_phmd)
 
     return scr
 
 
 store = Store()
 
-args = getDefaultBi2015b()
+args = get_dflt_bi2015b()
 params = Parameters(True, **args)
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -339,7 +340,7 @@ params = Parameters(True, **args)
 # scr = classify2015a(dataset_2015a, params, store)
 
 dataset_2015b = BrainInvaders2015b()
-scr = classify2015b(dataset_2015b, params, store)
+scr = classify_2015b(dataset_2015b, params, store)
 
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves, params, store)

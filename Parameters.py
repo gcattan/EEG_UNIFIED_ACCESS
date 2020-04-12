@@ -25,43 +25,43 @@ def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
     return locals()
 
 
-def getDefaultBi2012():
+def get_dflt_bi2012():
     return __toVariadicArgs__(**__base_dflts__())
 
 
-def getDefaultBi2013():
+def get_dflt_bi2013():
     return __toVariadicArgs__(**__base_dflts__(), **all_sessions)
 
 
-def getDefaultBi2014a():
+def get_dflt_bi2014a():
     return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict))
 
 
-def getDefaultBi2014b():
+def get_dflt_bi2014b():
     return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
                               **all_pairs, xpdesign=['cola', 'solo'])
 
 
-def getDefaultBi2015a():
+def get_dflt_bi2015a():
     return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_std), **all_sessions)
 
 
-def getDefaultBi2015b():
+def get_dflt_bi2015b():
     return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
                               **all_sessions, **all_pairs)
 
 
-def getDefaultAlpha():
+def get_dflt_alpha():
     return __toVariadicArgs__(**__base_dflts__(condition=['closed'], tmin=[2.0], tmax=[8.0],
                                                **dwnsplg_high, **freq_large, **with_cov))
 
 
-def getDefaultPHMD():
+def get_dflt_phmd():
     return __toVariadicArgs__(**__base_dflts__(condition=['OFF'], tmin=[10], tmax=[50],
                                                **dwnsplg_high, **freq_high, **with_cov))
 
 
-def getDefaultVR():
+def get_dflt_vr():
     return __toVariadicArgs__(**__base_dflts__(validation=['erp_cov_vr_pc']),
                               repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
 
@@ -71,7 +71,7 @@ class Parameters():
         self.useCache = useCache
         self.params = args
 
-    def __computeSubjects__(self, dataset):
+    def __compute_subjects__(self, dataset):
         dataset_subjects = dataset.subject_list
         if 'pair' in self.params:
             subject = self.params['pair']
@@ -87,26 +87,26 @@ class Parameters():
             return random.sample(dataset_subjects, int(numberOfsubjects * percent / 100))
         return subject
 
-    def __computeSession2013__(self):
+    def __compute_session_2013__(self):
         session = self.params['session']
         if session == 'all':
             return ['session_1', 'session_2', 'session_3', 'session_4',
                     'session_5', 'session_6', 'session_7', 'session_8']
         return ['session_' + str(x) for x in session]
 
-    def __computeSession2015a__(self):
+    def __compute_session_2015a__(self):
         session = self.params['session']
         if session == 'all':
             return ['session_1', 'session_2', 'session_3']
         return ['session_' + str(x) for x in session]
 
-    def __computeSession2015b__(self):
+    def __compute_session_2015b__(self):
         session = self.params['session']
         if session == 'all':
             return ['s1', 's2', 's3', 's4']
         return ['s' + str(x) for x in session]
 
-    def __computeTrainAndTest__(self):
+    def __compute_train_and_test__(self):
         subset = []
         blocks = np.arange(1, 13)
         indexes = np.arange(12)
@@ -119,40 +119,40 @@ class Parameters():
 
     def __base__(self, dataset, subject=None):
         return __toVariadicArgs__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
-                                  fs=self.params['fs'], subject=self.__computeSubjects__(
+                                  fs=self.params['fs'], subject=self.__compute_subjects__(
                                       dataset), validation=self.params['validation'],
                                   fmin=self.params['fmin'], fmax=self.params['fmax'])
 
-    def getBi2012(self, dataset):
+    def get_bi2012(self, dataset):
         return lz(bdd=['bi2012'], **self.__base__(dataset))
 
-    def getBi2013(self, dataset):
+    def get_bi2013(self, dataset):
         return lz(bdd=['bi2013'], **self.__base__(dataset),
-                  session=self.__computeSession2013__())
+                  session=self.__compute_session_2013__())
 
-    def getBi2014a(self, dataset):
+    def get_bi2014a(self, dataset):
         return lz(bdd=['bi2014a'], **self.__base__(dataset))
 
     # subject/ 1 or 2. Pair = same as subject for other datasets
-    def getBi2014b(self, dataset):
+    def get_bi2014b(self, dataset):
         return lz(bdd=['bi2014b'], **self.__base__(dataset, subject=self.params['subject']),
-                  pair=self.__computeSubjects__(dataset), xpdesign=['cola', 'solo'])
+                  pair=self.__compute_subjects__(dataset), xpdesign=['cola', 'solo'])
 
-    def getBi2015a(self, dataset):
+    def get_bi2015a(self, dataset):
         return lz(bdd=['bi2015a'], **self.__base__(dataset),
-                  session=self.__computeSession2015a__())
+                  session=self.__compute_session_2015a__())
 
-    def getBi2015b(self, dataset):
+    def get_bi2015b(self, dataset):
         return lz(bdd=['bi2015b'], **self.__base__(dataset, subject=self.params['subject']),
-                  pair=self.__computeSubjects__(dataset), session=self.__computeSession2015b__())
+                  pair=self.__compute_subjects__(dataset), session=self.__compute_session_2015b__())
 
-    def getAlpha(self, dataset):
+    def get_alpha(self, dataset):
         return lz(bdd=['alpha'], **self.__base__(dataset))
 
-    def getPHMD(self, dataset):
+    def get_phmd(self, dataset):
         return lz(bdd=['PHMD'], **self.__base__(dataset))
 
-    def getVR(self, dataset):
-        self.__computeTrainAndTest__()
+    def get_vr(self, dataset):
+        self.__compute_train_and_test__()
         return lz(bdd=['VR'], **self.__base__(dataset),
                   repetitions=self.params['repetitions'], subset=self.params['subset'], xpdesign=self.params['xpdesign'])

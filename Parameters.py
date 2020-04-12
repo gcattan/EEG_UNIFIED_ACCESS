@@ -8,7 +8,6 @@ def __toVariadicArgs__(**args):
     return args
 
 
-time_std = __toVariadicArgs__(tmin=[0.0], tmax=[1.0])
 time_low = __toVariadicArgs__(tmin=[0.0], tmax=[0.8])
 freq_std = __toVariadicArgs__(fmin=[1], fmax=[24])
 freq_strict = __toVariadicArgs__(fmin=[1], fmax=[20])
@@ -18,10 +17,11 @@ all_sbj_in_pair = __toVariadicArgs__(subject=[1, 2])
 all_sessions = __toVariadicArgs__(session='all')
 all_pairs = __toVariadicArgs__(pair='all')
 dwnsplg_high = __toVariadicArgs__(fs=[128])
+with_cov = __toVariadicArgs__(validation=['cov'])
 
 
 def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
-                   subject='all', fmin=[1], fmax=[24], validation=['crossValidationERP']):
+                   subject='all', fmin=[1], fmax=[24], validation=['erp_cov']):
     return locals()
 
 
@@ -53,16 +53,17 @@ def getDefaultBi2015b():
 
 def getDefaultAlpha():
     return __toVariadicArgs__(**__base_dflts__(condition=['closed'], tmin=[2.0], tmax=[8.0],
-                                               **dwnsplg_high, **freq_large))
+                                               **dwnsplg_high, **freq_large, **with_cov))
 
 
 def getDefaultPHMD():
     return __toVariadicArgs__(**__base_dflts__(condition=['OFF'], tmin=[10], tmax=[50],
-                                               **dwnsplg_high, **freq_high))
+                                               **dwnsplg_high, **freq_high, **with_cov))
 
 
 def getDefaultVR():
-    return __toVariadicArgs__(**__base_dflts__(), repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
+    return __toVariadicArgs__(**__base_dflts__(validation=['erp_cov_vr_pc']),
+                              repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
 
 
 class Parameters():
@@ -119,7 +120,7 @@ class Parameters():
     def __base__(self, dataset, subject=None):
         return __toVariadicArgs__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
                                   fs=self.params['fs'], subject=self.__computeSubjects__(
-                                      dataset),
+                                      dataset), validation=self.params['validation'],
                                   fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def getBi2012(self, dataset):

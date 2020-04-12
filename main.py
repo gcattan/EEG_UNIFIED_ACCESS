@@ -16,17 +16,23 @@ from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
 from virtualreality.utilities import get_block_repetition
 from moabb.paradigms import P300
-from crossvalidation import *
-
+from sklearn.preprocessing import LabelEncoder
+from store import Store
+from parameters import *
 
 import numpy as np
 import mne
 import pandas as pd
-from parameters import *
-from store import Store
+import crossvalidation
+
 
 import warnings
 warnings.filterwarnings("ignore")
+
+classInfo_classic = {'Target': 2, 'NonTarget': 1}
+classInfo_vr = {'Target': 1, 'NonTarget': 0}
+classInfo_alpha = {'closed': 1, 'open': 2}
+classInfo = {'OFF': 1, 'ON': 2}
 
 # filter data and resample
 
@@ -39,13 +45,12 @@ def baseFilter(raw, minF, maxF, sfResample=None):
 # detect the events and cut the signal into epochs
 
 
-def epoching(raw, Class1Value, Class2Value, tmin, tmax, Class1Name='NonTarget', Class2Name='Target'):
+def epoching(raw, tmin, tmax, event_id):
     events = mne.find_events(raw=raw, shortest_event=1, verbose=False)
-    event_id = {Class1Name: Class1Value, Class2Name: Class2Value}
     epochs = mne.Epochs(raw, events, event_id, tmin=tmin,
                         tmax=tmax, baseline=None, verbose=False, preload=True)
     epochs.pick_types(eeg=True)
-    return (events, epochs, event_id)
+    return (events, epochs)
 
 
 def getData(dataset, subject):
@@ -54,10 +59,14 @@ def getData(dataset, subject):
 
 def getBaseTrialAndLabel(epochs, events, fixIndex=False):
     y = events[:, -1]
-    return epochs.get_data(), y - 1 if fixIndex else y
+    X = epochs.get_data()
+    if(not len(X) == len(y)):
+        y = epochs.events[:, -1]
+    return X, y - 1 if fixIndex else y
 
 
-def useStore(params, store, key, validationMethod, *args):
+def useStore(params, store, key, validationName, *args):
+    validationMethod = getattr(crossvalidation, validationName)
     if params.useCache:
         if key in store:
             ret = store[key]
@@ -80,15 +89,15 @@ def classify2012(dataset, params, store):
         raw = data['session_1']['run_training']
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
-        events, epochs, _ = epoching(
-            raw, 1, 2, lz.tmin, lz.tmax)
+        events, epochs = epoching(
+            raw, lz.tmin, lz.tmax, classInfo_classic)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        ret = useStore(params, store, lz, crossValidationERP,
-                       X, y, lz.condition)
+        ret = useStore(params, store, lz, lz.validation,
+                       X, y, lz.condition, classInfo_classic)
 
         scr[str(lz)] = ret
 
@@ -96,6 +105,7 @@ def classify2012(dataset, params, store):
 
 
 def classify2013(dataset, params, store):
+    classInfo = {'Target': 33285, 'NonTarget': 33286}
     scores = {}
 
     # get the data from subject of interest
@@ -109,15 +119,14 @@ def classify2013(dataset, params, store):
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs, _ = epoching(raw, 33286, 33285, lz.tmin, lz.tmax)
+        events, epochs = epoching(
+            raw, lz.tmin, lz.tmax, classInfo)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events)
-        y[y == 33286] = 0
-        y[y == 33285] = 1
 
-        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
-                                   X, y, lz.condition)
+        scores[str(lz)] = useStore(params, store, lz, lz.validation,
+                                   X, y, lz.condition, classInfo)
 
     return scores
 
@@ -133,13 +142,13 @@ def classify2014a(dataset, params, store):
         raw = sessions['session_1']['run_1']
 
         baseFilter(raw, lz.fmin, lz.fmax)
-        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidationERP,
-                                X, y, lz.condition)
+        scr[str(lz)] = useStore(params, store, lz, lz.validation,
+                                X, y, lz.condition, classInfo_classic)
 
     return scr
 
@@ -164,18 +173,19 @@ def classify2014b(dataset, params, store):
         raw = raw.copy().pick_channels(pick_channels)
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
-        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
-                                   X, y, lz.condition)
+        scores[str(lz)] = useStore(params, store, lz, lz.validation,
+                                   X, y, lz.condition, classInfo_classic)
 
     return scores
 
 
 def classify2015a(dataset, params, store):
+
     scr = {}
 
     # note that subject 31 at session 3 has a few samples which are 'nan'
@@ -190,13 +200,13 @@ def classify2015a(dataset, params, store):
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidationERP,
-                                X, y, lz.condition)
+        scr[str(lz)] = useStore(params, store, lz, lz.validation,
+                                X, y, lz.condition, classInfo_classic)
 
     return scr
 
@@ -219,14 +229,13 @@ def classify2015b(dataset, params, store):
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs, _ = epoching(raw, 1, 2, lz.tmin, lz.tmax)
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_classic)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events, fixIndex=True)
-        y = epochs.events[:, -1]
-        y = y - 1
-        scores[str(lz)] = useStore(params, store, lz, crossValidationERP,
-                                   X, y, lz.condition)
+
+        scores[str(lz)] = useStore(params, store, lz, lz.validation,
+                                   X, y, lz.condition, classInfo_classic)
 
     return scores
 
@@ -239,15 +248,13 @@ def classifyAlphaWaves(dataset, params, store):
 
         baseFilter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        conditions = {'closed': 1, 'open': 2}
-        events, epochs, _ = epoching(
-            raw, conditions['closed'], conditions['open'], lz.tmin, lz.tmax, 'closed', 'open')
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_alpha)
 
         # get trials and labels
         X, y = getBaseTrialAndLabel(epochs, events)
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidation,
-                                X, y, lz.condition, conditions)
+        scr[str(lz)] = useStore(params, store, lz, lz.validation,
+                                X, y, lz.condition, conditions, classInfo_alpha)
 
     return scr
 
@@ -255,7 +262,6 @@ def classifyAlphaWaves(dataset, params, store):
 def classifyVR(dataset, params, stores):
     # get the paradigm
     paradigm = P300()
-
     scr = {}
     for lz in params.getVR(dataset):
         print('running', lz)
@@ -279,8 +285,8 @@ def classifyVR(dataset, params, stores):
         X_test, labels_test, _ = get_block_repetition(
             X, labels, meta, lz.subset['test'], lz.repetitions)
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidationVR,
-                                X_training, labels_training, X_test, labels_test, lz.condition)
+        scr[str(lz)] = useStore(params, store, lz, lz.validation,
+                                X_training, labels_training, X_test, labels_test, lz.condition, classInfo_vr)
 
     return scr
 
@@ -298,23 +304,22 @@ def classifyPHMDML(dataset, params, store):
         dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
         # cut the signals into epochs and get the labels associated to each trial
-        conditions = {'OFF': 1, 'ON': 2}
-        events, epochs, event_id = epoching(
-            raw, conditions['OFF'], conditions['ON'], lz.tmin, lz.tmax, 'OFF', 'ON')
+
+        events, epochs = epoching(raw, lz.tmin, lz.tmax, classInfo_phmd)
 
         X = epochs.get_data()
-        inv_events = {k: v for v, k in event_id.items()}
+        inv_events = {k: v for v, k in classInfo.items()}
         y = np.array([inv_events[e] for e in epochs.events[:, -1]])
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidation,
-                                X, y, lz.condition, conditions)
+        scr[str(lz)] = useStore(params, store, lz, lz.validation,
+                                X, y, lz.condition, classInfo_phmd)
 
     return scr
 
 
 store = Store()
 
-args = getDefaultVR()
+args = getDefaultBi2015b()
 params = Parameters(True, **args)
 
 # dataset_2012 = BrainInvaders2012(Training=True)
@@ -333,14 +338,14 @@ params = Parameters(True, **args)
 # dataset_2015a = BrainInvaders2015a()
 # scr = classify2015a(dataset_2015a, params, store)
 
-# dataset_2015b = BrainInvaders2015b()
-# scr = classify2015b(dataset_2015b, params, store)
+dataset_2015b = BrainInvaders2015b()
+scr = classify2015b(dataset_2015b, params, store)
 
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
 
-dataset_VR = VirtualReality(useMontagePosition=False)
-scr = classifyVR(dataset_VR, params, store)
+# dataset_VR = VirtualReality(useMontagePosition=False)
+# scr = classifyVR(dataset_VR, params, store)
 
 # dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML, params, store)

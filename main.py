@@ -23,7 +23,7 @@ from parameters import *
 import numpy as np
 import mne
 import pandas as pd
-import crossvalidation
+import cross_validation
 
 
 import warnings
@@ -66,7 +66,7 @@ def getBaseTrialAndLabel(epochs, events, fixIndex=False):
 
 
 def useStore(params, store, key, validationName, *args):
-    validationMethod = getattr(crossvalidation, validationName)
+    validationMethod = getattr(cross_validation, validationName)
     if params.useCache:
         if key in store:
             ret = store[key]

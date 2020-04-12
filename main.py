@@ -266,8 +266,8 @@ def classifyVR(dataset, params, stores):
         paradigm.resample = lz.fs
 
         # define the dataset instance
-        dataset.VR = True if lz.condition is 'VR' else False
-        dataset.PC = True if lz.condition is 'PC' else False
+        dataset.VR = True if lz.xpdesign is 'VR' else False
+        dataset.PC = True if lz.xpdesign is 'PC' else False
 
         # get the epochs and labels
         X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
@@ -279,8 +279,8 @@ def classifyVR(dataset, params, stores):
         X_test, labels_test, _ = get_block_repetition(
             X, labels, meta, lz.subset['test'], lz.repetitions)
 
-        scr[str(lz)] = useStore(params, store, lz, crossValidation,
-                                X_training, labels_training, X_test, labels_test)
+        scr[str(lz)] = useStore(params, store, lz, crossValidationVR,
+                                X_training, labels_training, X_test, labels_test, lz.condition)
 
     return scr
 

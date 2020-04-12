@@ -8,61 +8,61 @@ def __toVariadicArgs__(**args):
     return args
 
 
-t0_100 = __toVariadicArgs__(tmin=[0.0], tmax=[1.0])
-t10_80 = __toVariadicArgs__(tmin=[0.0], tmax=[0.8])
-f1_24 = __toVariadicArgs__(fmin=[1], fmax=[24])
-f1_20 = __toVariadicArgs__(fmin=[1], fmax=[20])
+time_std = __toVariadicArgs__(tmin=[0.0], tmax=[1.0])
+time_low = __toVariadicArgs__(tmin=[0.0], tmax=[0.8])
+freq_std = __toVariadicArgs__(fmin=[1], fmax=[24])
+freq_strict = __toVariadicArgs__(fmin=[1], fmax=[20])
+freq_high = __toVariadicArgs__(fmin=[1], fmax=[35])
+freq_large = __toVariadicArgs__(fmin=[3], fmax=[40])
+all_sbj_in_pair = __toVariadicArgs__(subject=[1, 2])
+all_sessions = __toVariadicArgs__(session='all')
+all_pairs = __toVariadicArgs__(pair='all')
+dwnsplg_high = __toVariadicArgs__(fs=[128])
+
+
+def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
+                   subject='all', fmin=[1], fmax=[24]):
+    return locals()
 
 
 def getDefaultBi2012():
-    return __toVariadicArgs__(condition=['Target'], **t0_100, fs=[None],
-                              subject='all', **f1_24)
+    return __toVariadicArgs__(**__base_dflts__())
 
 
 def getDefaultBi2013():
-    return __toVariadicArgs__(condition='Target', **t0_100, fs=[None],
-                              subject='all', **f1_24,
-                              session='all')
+    return __toVariadicArgs__(**__base_dflts__(), **all_sessions)
 
 
 def getDefaultBi2014a():
-    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
-                              subject='all', **f1_20)
+    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict))
 
 
 def getDefaultBi2014b():
-    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
-                              pair='all', **f1_20, subject=[1, 2], xpdesign=['cola', 'solo'])
+    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
+                              **all_pairs, xpdesign=['cola', 'solo'])
 
 
 def getDefaultBi2015a():
-    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
-                              subject='all', **f1_24,
-                              session='all')
+    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_std), **all_sessions)
 
 
 def getDefaultBi2015b():
-    return __toVariadicArgs__(condition=['Target'], **t10_80, fs=[None],
-                              subject=[1, 2], **f1_20,
-                              session='all', pair='all')
+    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
+                              **all_sessions, **all_pairs)
 
 
 def getDefaultAlpha():
-    return __toVariadicArgs__(condition=['closed'], tmin=[2.0],
-                              tmax=[8.0], fs=[128],
-                              subject='all', fmin=[3], fmax=[40])
+    return __toVariadicArgs__(**__base_dflts__(condition=['closed'], tmin=[2.0], tmax=[8.0],
+                                               **dwnsplg_high, **freq_large))
 
 
 def getDefaultPHMD():
-    return __toVariadicArgs__(condition=['OFF'], tmin=[10],
-                              tmax=[50], fs=[128],
-                              subject='all', fmin=[1], fmax=[35])
+    return __toVariadicArgs__(**__base_dflts__(condition=['OFF'], tmin=[10], tmax=[50],
+                                               **dwnsplg_high, **freq_high))
 
 
 def getDefaultVR():
-    return __toVariadicArgs__(condition=['VR'], fs=[None],
-                              subject='all', fmin=[1], fmax=[24],
-                              repetitions=[[1, 2]], nsplits=[6], **t0_100)
+    return __toVariadicArgs__(**__base_dflts__(), repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
 
 
 class Parameters():
@@ -166,4 +166,4 @@ class Parameters():
         return lz(bdd=['VR'], condition=self.params['condition'], tmin=self.params['tmin'],
                   tmax=self.params['tmax'], fs=self.params['fs'],
                   subject=self.__computeSubjects__(dataset), fmin=self.params['fmin'], fmax=self.params['fmax'],
-                  repetitions=self.params['repetitions'], subset=self.params['subset'])
+                  repetitions=self.params['repetitions'], subset=self.params['subset'], xpdesign=self.params['xpdesign'])

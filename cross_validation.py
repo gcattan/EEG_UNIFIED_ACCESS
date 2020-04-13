@@ -7,10 +7,16 @@ from pyriemann.classification import MDM
 from pyriemann.estimation import ERPCovariances, Covariances
 
 
-def erp_cov(X, y, ClassName, ClassInfo):
+def __get__proto__class__(class_name, class_info):
+    for k, v in class_info.items():
+        if(not k == class_name):
+            return [v]
+
+
+def erp_cov(X, y, class_name, class_info):
+    c = __get__proto__class__(class_name, class_info)
     skf = StratifiedKFold(n_splits=5)
-    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[
-                        ClassInfo[ClassName]]), MDM())
+    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=c), MDM())
     return cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
 
 

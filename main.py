@@ -320,11 +320,11 @@ def classify_phmd(dataset, params, store):
 
 store = Store()
 
-args = get_dflt_bi2015b()
+args = get_dflt_bi2012()
 params = Parameters(True, **args)
 
-# dataset_2012 = BrainInvaders2012(Training=True)
-# scr = classify2012(dataset_2012, params, store)
+dataset_2012 = BrainInvaders2012(Training=True)
+scr = classify_2012(dataset_2012, params, store)
 
 # dataset_2013 = BrainInvaders2013(
 #     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
@@ -339,8 +339,8 @@ params = Parameters(True, **args)
 # dataset_2015a = BrainInvaders2015a()
 # scr = classify2015a(dataset_2015a, params, store)
 
-dataset_2015b = BrainInvaders2015b()
-scr = classify_2015b(dataset_2015b, params, store)
+# dataset_2015b = BrainInvaders2015b()
+# scr = classify_2015b(dataset_2015b, params, store)
 
 # dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 # scr = classifyAlphaWaves(dataset_alphaWaves, params, store)

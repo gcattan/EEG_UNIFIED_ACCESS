@@ -4,20 +4,20 @@ import numpy as np
 import random
 
 
-def __toVariadicArgs__(**args):
+def __to_variadic_args__(**args):
     return args
 
 
-time_low = __toVariadicArgs__(tmin=[0.0], tmax=[0.8])
-freq_std = __toVariadicArgs__(fmin=[1], fmax=[24])
-freq_strict = __toVariadicArgs__(fmin=[1], fmax=[20])
-freq_high = __toVariadicArgs__(fmin=[1], fmax=[35])
-freq_large = __toVariadicArgs__(fmin=[3], fmax=[40])
-all_sbj_in_pair = __toVariadicArgs__(subject=[1, 2])
-all_sessions = __toVariadicArgs__(session='all')
-all_pairs = __toVariadicArgs__(pair='all')
-dwnsplg_high = __toVariadicArgs__(fs=[128])
-with_cov = __toVariadicArgs__(validation=['cov'])
+time_low = __to_variadic_args__(tmin=[0.0], tmax=[0.8])
+freq_std = __to_variadic_args__(fmin=[1], fmax=[24])
+freq_strict = __to_variadic_args__(fmin=[1], fmax=[20])
+freq_high = __to_variadic_args__(fmin=[1], fmax=[35])
+freq_large = __to_variadic_args__(fmin=[3], fmax=[40])
+all_sbj_in_pair = __to_variadic_args__(subject=[1, 2])
+all_sessions = __to_variadic_args__(session='all')
+all_pairs = __to_variadic_args__(pair='all')
+dwnsplg_high = __to_variadic_args__(fs=[128])
+with_cov = __to_variadic_args__(validation=['cov'])
 
 
 def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
@@ -26,49 +26,49 @@ def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
 
 
 def get_dflt_bi2012():
-    return __toVariadicArgs__(**__base_dflts__())
+    return __to_variadic_args__(**__base_dflts__())
 
 
 def get_dflt_bi2013():
-    return __toVariadicArgs__(**__base_dflts__(), **all_sessions)
+    return __to_variadic_args__(**__base_dflts__(), **all_sessions)
 
 
 def get_dflt_bi2014a():
-    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict))
+    return __to_variadic_args__(**__base_dflts__(**time_low, **freq_strict))
 
 
 def get_dflt_bi2014b():
-    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
-                              **all_pairs, xpdesign=['cola', 'solo'])
+    return __to_variadic_args__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
+                                **all_pairs, xpdesign=['cola', 'solo'])
 
 
 def get_dflt_bi2015a():
-    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_std), **all_sessions)
+    return __to_variadic_args__(**__base_dflts__(**time_low, **freq_std), **all_sessions)
 
 
 def get_dflt_bi2015b():
-    return __toVariadicArgs__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
-                              **all_sessions, **all_pairs)
+    return __to_variadic_args__(**__base_dflts__(**time_low, **freq_strict, **all_sbj_in_pair),
+                                **all_sessions, **all_pairs)
 
 
 def get_dflt_alpha():
-    return __toVariadicArgs__(**__base_dflts__(condition=['closed'], tmin=[2.0], tmax=[8.0],
-                                               **dwnsplg_high, **freq_large, **with_cov))
+    return __to_variadic_args__(**__base_dflts__(condition=['closed'], tmin=[2.0], tmax=[8.0],
+                                                 **dwnsplg_high, **freq_large, **with_cov))
 
 
 def get_dflt_phmd():
-    return __toVariadicArgs__(**__base_dflts__(condition=['OFF'], tmin=[10], tmax=[50],
-                                               **dwnsplg_high, **freq_high, **with_cov))
+    return __to_variadic_args__(**__base_dflts__(condition=['OFF'], tmin=[10], tmax=[50],
+                                                 **dwnsplg_high, **freq_high, **with_cov))
 
 
 def get_dflt_vr():
-    return __toVariadicArgs__(**__base_dflts__(validation=['erp_cov_vr_pc']),
-                              repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
+    return __to_variadic_args__(**__base_dflts__(validation=['erp_cov_vr_pc']),
+                                repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
 
 
 class Parameters():
-    def __init__(self, useCache, **args):
-        self.useCache = useCache
+    def __init__(self, use_cache, **args):
+        self.use_cache = use_cache
         self.params = args
 
     def __compute_subjects__(self, dataset):
@@ -118,10 +118,10 @@ class Parameters():
         self.params['subset'] = subset
 
     def __base__(self, dataset, subject=None):
-        return __toVariadicArgs__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
-                                  fs=self.params['fs'], subject=self.__compute_subjects__(
-                                      dataset), validation=self.params['validation'],
-                                  fmin=self.params['fmin'], fmax=self.params['fmax'])
+        return __to_variadic_args__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
+                                    fs=self.params['fs'], subject=self.__compute_subjects__(
+            dataset), validation=self.params['validation'],
+            fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def get_bi2012(self, dataset):
         return lz(bdd=['bi2012'], **self.__base__(dataset))

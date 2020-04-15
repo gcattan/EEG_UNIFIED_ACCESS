@@ -68,7 +68,7 @@ def get_base_trial_and_label(epochs, events, fix_index=False):
 
 def use_store(params, store, key, validationName, *args):
     validation_method = getattr(cross_validation, validationName)
-    if params.useCache:
+    if params.use_cache:
         if key in store:
             ret = store[key]
         else:
@@ -320,15 +320,16 @@ def classify_phmd(dataset, params, store):
 
 store = Store()
 
-args = get_dflt_bi2012()
+args = get_dflt_bi2013()
+args['subject'] = 1
 params = Parameters(True, **args)
 
-dataset_2012 = BrainInvaders2012(Training=True)
-scr = classify_2012(dataset_2012, params, store)
+# dataset_2012 = BrainInvaders2012(Training=True)
+# scr = classify_2012(dataset_2012, params, store)
 
-# dataset_2013 = BrainInvaders2013(
-#     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
-# scr = classify2013(dataset_2013, params, store)
+dataset_2013 = BrainInvaders2013(
+    NonAdaptive=True, Adaptive=False, Training=True, Online=False)
+scr = classify_2013(dataset_2013, params, store)
 
 # dataset_2014a = BrainInvaders2014a()
 # scr = classify2014a(dataset_2014a, params, store)

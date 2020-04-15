@@ -20,7 +20,7 @@ def erp_cov(X, y, class_name, class_info):
     return cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
 
 
-def cov(X, y, ClassName, ClassInfo):
+def cov(X, y, class_name, class_info):
     skf = StratifiedKFold(n_splits=5)
     clf = make_pipeline(Covariances(estimator='lwf'), MDM())
     return cross_val_score(clf, X, y, cv=skf).mean()

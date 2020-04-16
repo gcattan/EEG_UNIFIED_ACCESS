@@ -8,9 +8,10 @@ from pyriemann.estimation import ERPCovariances, Covariances
 
 
 def __get__proto__class__(class_name, class_info):
-    for k, v in class_info.items():
-        if(not k == class_name):
-            return [v]
+    # for k, v in class_info.items():
+    #     if(not k == class_name):
+    #         return [v]
+    return [class_info[class_name]]
 
 
 def erp_cov(X, y, class_name, class_info):

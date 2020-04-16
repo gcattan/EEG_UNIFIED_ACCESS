@@ -97,10 +97,9 @@ def classify_2012(dataset, params, store):
         X, y = get_base_trial_and_label(epochs, events)
         y = LabelEncoder().fit_transform(y)
 
-        ret = use_store(params, store, lz, lz.validation,
-                        X, y, lz.condition, class_info_std)
-
-        scr[str(lz)] = ret
+        # known issue; work only with NonTarget
+        scr[str(lz)] = use_store(params, store, lz, lz.validation,
+                                 X, y, "NonTarget", class_info_std)
 
     return scr
 
@@ -320,16 +319,16 @@ def classify_phmd(dataset, params, store):
 
 store = Store()
 
-args = get_dflt_bi2013()
-args['subject'] = 1
-params = Parameters(True, **args)
+args = get_dflt_bi2012()
+args['subject'] = [1]
+params = Parameters(False, **args)
 
-# dataset_2012 = BrainInvaders2012(Training=True)
-# scr = classify_2012(dataset_2012, params, store)
+dataset_2012 = BrainInvaders2012(Training=True)
+scr = classify_2012(dataset_2012, params, store)
 
-dataset_2013 = BrainInvaders2013(
-    NonAdaptive=True, Adaptive=False, Training=True, Online=False)
-scr = classify_2013(dataset_2013, params, store)
+# dataset_2013 = BrainInvaders2013(
+#     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
+# scr = classify_2013(dataset_2013, params, store)
 
 # dataset_2014a = BrainInvaders2014a()
 # scr = classify2014a(dataset_2014a, params, store)

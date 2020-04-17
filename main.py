@@ -335,7 +335,7 @@ dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
-args = get_dflt_bi2013()
+args = get_dflt_bi2014a()
 args['subject'] = [1]
 params = Parameters(False, **args)
 

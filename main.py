@@ -86,6 +86,8 @@ def classify_2012(dataset, params, store):
 
         print('running', lz)
 
+        dataset.Training = lz.training
+
         data = get_data(dataset, lz.subject)
         raw = data['session_1']['run_training']
 
@@ -95,11 +97,9 @@ def classify_2012(dataset, params, store):
 
         # get trials and labels
         X, y = get_base_trial_and_label(epochs, events)
-        y = LabelEncoder().fit_transform(y)
 
-        # known issue; work only with NonTarget
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
-                                 X, y, "NonTarget", class_info_std)
+                                 X, y, lz.condition, class_info_std)
 
     return scr
 
@@ -112,6 +112,11 @@ def classify_2013(dataset, params, store):
     for lz in params.get_bi2013(dataset):
 
         print('running', lz)
+
+        dataset.NonAdaptive = lz.nonadaptive
+        dataset.Adaptive = lz.adaptive
+        dataset.Training = lz.training
+        dataset.online = lz.online
 
         data = get_data(dataset, lz.subject)
 
@@ -145,7 +150,7 @@ def classify_2014a(dataset, params, store):
         events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
+        X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_std)
@@ -319,36 +324,37 @@ def classify_phmd(dataset, params, store):
 
 store = Store()
 
-args = get_dflt_bi2012()
+dataset_2012 = BrainInvaders2012(Training=True)
+dataset_2013 = BrainInvaders2013(
+    NonAdaptive=True, Adaptive=False, Training=True, Online=False)
+dataset_2014a = BrainInvaders2014a()
+dataset_2014b = BrainInvaders2014b()
+dataset_2015a = BrainInvaders2015a()
+dataset_2015b = BrainInvaders2015b()
+dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
+dataset_VR = VirtualReality(useMontagePosition=False)
+dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
+
+args = get_dflt_bi2013()
 args['subject'] = [1]
 params = Parameters(False, **args)
 
-dataset_2012 = BrainInvaders2012(Training=True)
-scr = classify_2012(dataset_2012, params, store)
+# scr = classify_2012(dataset_2012, params, store)
 
-# dataset_2013 = BrainInvaders2013(
-#     NonAdaptive=True, Adaptive=False, Training=True, Online=False)
 # scr = classify_2013(dataset_2013, params, store)
 
-# dataset_2014a = BrainInvaders2014a()
-# scr = classify2014a(dataset_2014a, params, store)
+scr = classify_2014a(dataset_2014a, params, store)
 
-# dataset_2014b = BrainInvaders2014b()
-# scr = classify2014b(dataset_2014b, params, store)
+# scr = classify_2014b(dataset_2014b, params, store)
 
-# dataset_2015a = BrainInvaders2015a()
-# scr = classify2015a(dataset_2015a, params, store)
+# scr = classify_2015a(dataset_2015a, params, store)
 
-# dataset_2015b = BrainInvaders2015b()
 # scr = classify_2015b(dataset_2015b, params, store)
 
-# dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
-# scr = classifyAlphaWaves(dataset_alphaWaves, params, store)
+# scr = classify_alpha(dataset_alphaWaves, params, store)
 
-# dataset_VR = VirtualReality(useMontagePosition=False)
-# scr = classifyVR(dataset_VR, params, store)
+# scr = classify_vr(dataset_VR, params, store)
 
-# dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 # scr = classifyPHMDML(dataset_PHMDML, params, store)
 
 store.save()

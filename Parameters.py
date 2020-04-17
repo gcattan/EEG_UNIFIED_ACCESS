@@ -26,11 +26,12 @@ def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
 
 
 def get_dflt_bi2012():
-    return __to_variadic_args__(**__base_dflts__())
+    return __to_variadic_args__(**__base_dflts__(), training=[True])
 
 
 def get_dflt_bi2013():
-    return __to_variadic_args__(**__base_dflts__(), **all_sessions)
+    return __to_variadic_args__(**__base_dflts__(), **all_sessions,
+                                nonadaptive=[True], adaptive=[False], training=[True], online=[False])
 
 
 def get_dflt_bi2014a():
@@ -124,11 +125,13 @@ class Parameters():
             fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def get_bi2012(self, dataset):
-        return lz(bdd=['bi2012'], **self.__base__(dataset))
+        return lz(bdd=['bi2012'], **self.__base__(dataset), training=self.params['training'])
 
     def get_bi2013(self, dataset):
         return lz(bdd=['bi2013'], **self.__base__(dataset),
-                  session=self.__compute_session_2013__())
+                  session=self.__compute_session_2013__(),
+                  nonadaptive=self.params['nonadaptive'], adaptive=self.params['adaptive'],
+                  training=self.params['training'], online=self.params['online'])
 
     def get_bi2014a(self, dataset):
         return lz(bdd=['bi2014a'], **self.__base__(dataset))

@@ -334,10 +334,9 @@ dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
 args = get_dflt_vr()
-args['subject'] = [1]
-params = Parameters(False, **args)
+params = Parameters(True, **args)
 
-# scr = classify_2012(dataset_2012, params, store)
+scr = classify_2012(dataset_2012, params, store)
 
 # scr = classify_2013(dataset_2013, params, store)
 
@@ -351,7 +350,7 @@ params = Parameters(False, **args)
 
 # scr = classify_alpha(dataset_alphaWaves, params, store)
 
-scr = classify_vr(dataset_VR, params, store)
+# scr = classify_vr(dataset_VR, params, store)
 
 # scr = classify_phmd(dataset_PHMDML, params, store)
 

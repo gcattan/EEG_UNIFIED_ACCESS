@@ -335,7 +335,7 @@ dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
-args = get_dflt_bi2014b()
+args = get_dflt_bi2015a()
 args['subject'] = [1]
 params = Parameters(False, **args)
 
@@ -345,9 +345,9 @@ params = Parameters(False, **args)
 
 # scr = classify_2014a(dataset_2014a, params, store)
 
-scr = classify_2014b(dataset_2014b, params, store)
+# scr = classify_2014b(dataset_2014b, params, store)
 
-# scr = classify_2015a(dataset_2015a, params, store)
+scr = classify_2015a(dataset_2015a, params, store)
 
 # scr = classify_2015b(dataset_2015b, params, store)
 

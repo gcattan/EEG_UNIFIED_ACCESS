@@ -16,7 +16,7 @@ from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
 from virtualreality.utilities import get_block_repetition
 from moabb.paradigms import P300
-#from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder
 from store import Store
 from parameters import *
 
@@ -282,7 +282,7 @@ def classify_vr(dataset, params, stores):
 
         # get the epochs and labels
         X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
-        # labels = LabelEncoder().fit_transform(labels)
+        labels = LabelEncoder().fit_transform(labels)
 
         # split in training and testing blocks
         X_training, labels_training, _ = get_block_repetition(
@@ -333,7 +333,7 @@ dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
-args = get_dflt_phmd()
+args = get_dflt_vr()
 args['subject'] = [1]
 params = Parameters(False, **args)
 
@@ -351,9 +351,9 @@ params = Parameters(False, **args)
 
 # scr = classify_alpha(dataset_alphaWaves, params, store)
 
-# scr = classify_vr(dataset_VR, params, store)
+scr = classify_vr(dataset_VR, params, store)
 
-scr = classify_phmd(dataset_PHMDML, params, store)
+# scr = classify_phmd(dataset_PHMDML, params, store)
 
 store.save()
 

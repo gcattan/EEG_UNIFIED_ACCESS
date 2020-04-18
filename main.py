@@ -16,7 +16,7 @@ from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
 from virtualreality.utilities import get_block_repetition
 from moabb.paradigms import P300
-from sklearn.preprocessing import LabelEncoder
+#from sklearn.preprocessing import LabelEncoder
 from store import Store
 from parameters import *
 
@@ -58,12 +58,12 @@ def get_data(dataset, subject):
     return dataset._get_single_subject_data(subject)
 
 
-def get_base_trial_and_label(epochs, events, fix_index=False):
+def get_base_trial_and_label(epochs, events):
     y = events[:, -1]
     X = epochs.get_data()
     if(not len(X) == len(y)):
         y = epochs.events[:, -1]
-    return X, y - 1 if fix_index else y
+    return X, y
 
 
 def use_store(params, store, key, validationName, *args):
@@ -181,7 +181,7 @@ def classify_2014b(dataset, params, store):
         events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
+        X, y = get_base_trial_and_label(epochs, events)
 
         scores[str(lz)] = use_store(params, store, lz, lz.validation,
                                     X, y, lz.condition, class_info_std)
@@ -208,7 +208,7 @@ def classify_2015a(dataset, params, store):
         events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
+        X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_std)
@@ -237,7 +237,7 @@ def classify_2015b(dataset, params, store):
         events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
         # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events, fix_index=True)
+        X, y = get_base_trial_and_label(epochs, events)
 
         scores[str(lz)] = use_store(params, store, lz, lz.validation,
                                     X, y, lz.condition, class_info_std)
@@ -282,7 +282,7 @@ def classify_vr(dataset, params, stores):
 
         # get the epochs and labels
         X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
-        labels = LabelEncoder().fit_transform(labels)
+        # labels = LabelEncoder().fit_transform(labels)
 
         # split in training and testing blocks
         X_training, labels_training, _ = get_block_repetition(
@@ -335,7 +335,7 @@ dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
-args = get_dflt_bi2014a()
+args = get_dflt_bi2014b()
 args['subject'] = [1]
 params = Parameters(False, **args)
 
@@ -343,9 +343,9 @@ params = Parameters(False, **args)
 
 # scr = classify_2013(dataset_2013, params, store)
 
-scr = classify_2014a(dataset_2014a, params, store)
+# scr = classify_2014a(dataset_2014a, params, store)
 
-# scr = classify_2014b(dataset_2014b, params, store)
+scr = classify_2014b(dataset_2014b, params, store)
 
 # scr = classify_2015a(dataset_2015a, params, store)
 

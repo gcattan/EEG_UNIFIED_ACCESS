@@ -312,9 +312,7 @@ def classify_phmd(dataset, params, store):
 
         events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_phmd)
 
-        X = epochs.get_data()
-        inv_events = {k: v for v, k in classInfo.items()}
-        y = np.array([inv_events[e] for e in epochs.events[:, -1]])
+        X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_phmd)
@@ -335,7 +333,7 @@ dataset_alphaWaves = AlphaWaves(useMontagePosition=False)
 dataset_VR = VirtualReality(useMontagePosition=False)
 dataset_PHMDML = HeadMountedDisplay(useMontagePosition=False)
 
-args = get_dflt_alpha()
+args = get_dflt_phmd()
 args['subject'] = [1]
 params = Parameters(False, **args)
 
@@ -351,11 +349,11 @@ params = Parameters(False, **args)
 
 # scr = classify_2015b(dataset_2015b, params, store)
 
-scr = classify_alpha(dataset_alphaWaves, params, store)
+# scr = classify_alpha(dataset_alphaWaves, params, store)
 
 # scr = classify_vr(dataset_VR, params, store)
 
-# scr = classifyPHMDML(dataset_PHMDML, params, store)
+scr = classify_phmd(dataset_PHMDML, params, store)
 
 store.save()
 

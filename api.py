@@ -10,12 +10,10 @@ PORT_NUMBER = 8585
 class apiCall(BaseHTTPRequestHandler):
 
     def _get_action_(self):
-        parameters = self.path.split('action=')
-        if(len(parameters) > 1):
-            action_attr = parameters[1].split("?")
-            if(len(action_attr) > 1):
-                return (action_attr[0], action_attr[1])
-            return (action_attr[0], None)
+        last_history = self.path.split('/')[-1]
+        pload = last_history.split("?")
+        if(len(pload) > 1):
+            return (pload[0], pload[1])
         return (None, None)
 
     # Handler for the GET requests
@@ -47,7 +45,3 @@ try:
 except KeyboardInterrupt:
     print('^C received, shutting down the web server')
     server.socket.close()
-
-
-# request = "@cache get-scores-in bi2012, bi2013 using subject=[1], tmax=[0.7] for bi2012, tmax=[0.9] for bi2013"
-# run_request(request)

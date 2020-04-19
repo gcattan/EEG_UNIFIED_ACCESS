@@ -1,6 +1,6 @@
 from parameters import Parameters
 
-request = "get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC] for bi2012"
+request = "@cache get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC; 1] for bi2012"
 
 GET_SCORES_IN = "get-scores-in"
 USING = "using"
@@ -10,6 +10,7 @@ ASSIGNATION = "="
 LIST_SEPARATOR = ";"
 LIST_BRAC_IN = "["
 LIST_BRAC_OUT = "]"
+CACHE = "@cache"
 
 
 def __clean__(string):
@@ -35,10 +36,25 @@ def __get_conditions__(request):
     return cdts
 
 
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+def __to_int_if_needed(array):
+    for i in range(0, len(array)):
+        if(is_int(array[i])):
+            array[i] = int(array[i])
+    return array
+
+
 def __interpret_value__(value):
     if(LIST_BRAC_IN in value):
-        return __btwn__(value, LIST_BRAC_IN,
-                        LIST_BRAC_OUT).split(LIST_SEPARATOR)
+        return __to_int_if_needed(__btwn__(value, LIST_BRAC_IN,
+                                           LIST_BRAC_OUT).split(LIST_SEPARATOR))
     return value
 
 
@@ -51,6 +67,10 @@ def __get_params_for_bdd__(bdd_name, conditions):
     return ret
 
 
+def __is_cache_request(request):
+    return CACHE in request
+
+
 def __get_params__(bdds, conditions, use_store):
     ret = {}
     for bdd in bdds:
@@ -59,13 +79,14 @@ def __get_params__(bdds, conditions, use_store):
     return ret
 
 
-def interpret(request, use_store):
+def interpret(request):
     request = __clean__(request)
     bdds = __get_bdds__(request)
     cdts = __get_conditions__(request)
+    use_store = __is_cache_request(request)
     return __get_params__(bdds, cdts, use_store)
 
 
-response = interpret(request, True)
+response = interpret(request)
 
 print(response)

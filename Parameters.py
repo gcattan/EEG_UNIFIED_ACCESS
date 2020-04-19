@@ -159,3 +159,9 @@ class Parameters():
         self.__compute_train_and_test__()
         return lz(bdd=['VR'], **self.__base__(dataset),
                   repetitions=self.params['repetitions'], subset=self.params['subset'], xpdesign=self.params['xpdesign'])
+
+    def __str__(self):
+        return str({'cache': self.use_cache, 'params': self.params})
+
+    def __repr__(self):
+        return self.__str__()

@@ -72,5 +72,5 @@ def run_request(str_request):
     return result
 
 
-request = "@cache get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC; 1] for bi2012"
+request = "@cache get-scores-in bi2012, bi2013 using subject=[1], tmax=[0.7] for bi2012, tmax=[0.9] for bi2013"
 run_request(request)

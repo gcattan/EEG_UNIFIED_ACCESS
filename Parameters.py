@@ -2,6 +2,7 @@ from lazy_product import LazyProduct as lz
 from sklearn.model_selection import KFold
 import numpy as np
 import random
+import sys
 
 
 def __to_variadic_args__(**args):
@@ -65,6 +66,10 @@ def get_dflt_phmd():
 def get_dflt_vr():
     return __to_variadic_args__(**__base_dflts__(validation=['erp_cov_vr_pc']),
                                 repetitions=[[1, 2]], nsplits=[6], xpdesign=['VR'])
+
+
+def get_dflt(bdd):
+    return getattr(sys.modules[__name__], "get_dflt_" + bdd)()
 
 
 class Parameters():

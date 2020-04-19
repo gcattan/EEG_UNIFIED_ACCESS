@@ -1,6 +1,5 @@
-from parameters import Parameters
+from parameters import Parameters, get_dflt
 
-request = "@cache get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC; 1] for bi2012"
 
 GET_SCORES_IN = "get-scores-in"
 USING = "using"
@@ -36,6 +35,14 @@ def __get_conditions__(request):
     return cdts
 
 
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
 def is_int(s):
     try:
         int(s)
@@ -48,6 +55,8 @@ def __to_int_if_needed(array):
     for i in range(0, len(array)):
         if(is_int(array[i])):
             array[i] = int(array[i])
+        elif(is_float(array[i])):
+            array[i] = float(array[i])
     return array
 
 
@@ -74,8 +83,9 @@ def __is_cache_request(request):
 def __get_params__(bdds, conditions, use_store):
     ret = {}
     for bdd in bdds:
-        ret[bdd] = Parameters(
-            use_store, **__get_params_for_bdd__(bdd, conditions))
+        args = get_dflt(bdd)
+        args.update(__get_params_for_bdd__(bdd, conditions))
+        ret[bdd] = Parameters(use_store, **args)
     return ret
 
 
@@ -87,6 +97,6 @@ def interpret(request):
     return __get_params__(bdds, cdts, use_store)
 
 
-response = interpret(request)
-
-print(response)
+# request = "@cache get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC; 1] for bi2012"
+# response = interpret(request)
+# print(response)

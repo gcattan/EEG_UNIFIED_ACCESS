@@ -5,6 +5,27 @@ import os
 import time
 import subprocess
 
+ALL = "all"
+BI_2012 = "bi2012"
+BI_2013 = "bi2013"
+BI_2014a = "bi2014a"
+BI_2014b = "bi2014b"
+BI_2015a = "bi2015a"
+BI_2015b = "bi2015b"
+ALPHA = "alpha"
+PHMD = "phmd"
+VR = "vr"
+
+GET_SCORES_IN = "get-scores-in"
+USING = "using"
+SEPARATOR = ","
+ASSIGNATION = "="
+LIST_SEPARATOR = ";"
+LIST_BRAC_IN = "["
+LIST_BRAC_OUT = "]"
+CACHE = "@cache"
+FOR = 'for'
+
 
 def startAndWaitForServer():
     subprocess.Popen(["python", "api.py"])
@@ -15,16 +36,51 @@ def startAndWaitForServer():
 
 class ClientRequest():
 
-    def __init__(self, str_request):
-        self.pload = str_request
+    def __init__(self):
+        self.pload = ""
         self.isCache = True
-        self.conditions = []
+        self.using = {}
         startAndWaitForServer()
 
     def useCache(self, isCache):
         self.isCache = isCache
 
-    def execute(self):
+    def __contains__(self, key):
+        return key in self.using
+
+    def __getitem__(self, key):
+        return self.using[key]
+
+    def __setitem__(self, key, value):
+        self.using[key] = value
+
+    def __build_pload__(self):
+        self.pload = CACHE if self.isCache else ''
+        self.pload += ' ' + GET_SCORES_IN
+
+        bdds = {}
+        conditions = ''
+        for key, value in self.using.items():
+            _for = ''
+            if(not value[1] == ALL):
+                bdds[value[1]] = True
+                _for = FOR + ' ' + value[1]
+            conditions += key + ASSIGNATION + \
+                str(value[0]).replace(',', LIST_SEPARATOR) + \
+                ' ' + _for + SEPARATOR + ' '
+
+        for key in bdds:
+            self.pload += ' ' + key + SEPARATOR
+        self.pload = self.pload[0:-1]
+        self.pload += ' ' + USING + ' ' + conditions
+        self.pload = self.pload[0:-2]
+
+    def execute(self, str_request=None):
+        if(str_request == None):
+            self.__build_pload__()
+        else:
+            self.pload = str_request
+        print(self.pload)
         connection = http.client.HTTPConnection("localhost:8585")
         connection.request("GET", "/request?" + self.pload.replace(" ", "%20"))
         response = connection.getresponse()
@@ -33,6 +89,12 @@ class ClientRequest():
         return literal_eval(response.readline().decode("utf-8"))
 
 
-request = ClientRequest(
-    "@cache get-scores-in bi2012 using subject=[1], tmax=[0.7]")
+request = ClientRequest()
+request.useCache(True)
+request['subject'] = ([1], BI_2013)
+request['tmax'] = ([0.7, 0.8, 'VR'], ALL)
+
 print(request.execute())
+
+print(request.execute(
+    "@cache get-scores-in bi2012 using subject=[1], tmax=[0.7]"))

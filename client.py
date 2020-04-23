@@ -5,7 +5,6 @@ import os
 import time
 import subprocess
 
-ALL = "all"
 BI_2012 = "bi2012"
 BI_2013 = "bi2013"
 BI_2014a = "bi2014a"
@@ -15,6 +14,12 @@ BI_2015b = "bi2015b"
 ALPHA = "alpha"
 PHMD = "phmd"
 VR = "vr"
+
+BIs = [BI_2012, BI_2013, BI_2014a, BI_2014b, BI_2015a, BI_2015b]
+ALPHAs = [ALPHA, PHMD]
+ERPs = [*BIs, VR]
+ALL = [*ERPs, *ALPHAs]
+
 
 GET_SCORES_IN = "get-scores-in"
 USING = "using"
@@ -32,6 +37,14 @@ def startAndWaitForServer():
     while not os.path.exists("server.lock"):
         time.sleep(0.1)
     return
+
+
+def __write_condition__(bdds, bdd, value, key):
+    bdds[bdd] = True
+    _for = FOR + ' ' + bdd
+    return key + ASSIGNATION + \
+        str(value[0]).replace(',', LIST_SEPARATOR) + \
+        ' ' + _for + SEPARATOR + ' '
 
 
 class ClientRequest():
@@ -62,12 +75,12 @@ class ClientRequest():
         conditions = ''
         for key, value in self.using.items():
             _for = ''
-            if(not value[1] == ALL):
-                bdds[value[1]] = True
-                _for = FOR + ' ' + value[1]
-            conditions += key + ASSIGNATION + \
-                str(value[0]).replace(',', LIST_SEPARATOR) + \
-                ' ' + _for + SEPARATOR + ' '
+            bdd = value[1]
+            if(not type(bdd) == list):
+                conditions += __write_condition__(bdds, bdd, value, key)
+            else:
+                for b in bdd:
+                    conditions += __write_condition__(bdds, b, value, key)
 
         for key in bdds:
             self.pload += ' ' + key + SEPARATOR

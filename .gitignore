@@ -102,3 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#hardlink
+virtualreality/
+headmounted/
+alphawaves/
+moabb/
+braininvaders2012/
+braininvaders2013/
+braininvaders2014a/
+braininvaders2014b/
+braininvaders2015a/
+braininvaders2015b/

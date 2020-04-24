@@ -1,15 +1,6 @@
 from parameters import Parameters, get_dflt
-
-
-GET_SCORES_IN = "get-scores-in"
-USING = "using"
-SEPARATOR = ","
-ALL = "all"
-ASSIGNATION = "="
-LIST_SEPARATOR = ";"
-LIST_BRAC_IN = "["
-LIST_BRAC_OUT = "]"
-CACHE = "@cache"
+from terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
+    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE
 
 
 def __clean__(string):

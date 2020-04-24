@@ -4,32 +4,11 @@ import http.client
 import os
 import time
 import subprocess
+from terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
+    CACHE, USING, GET_SCORES_IN
 
-BI_2012 = "bi2012"
-BI_2013 = "bi2013"
-BI_2014a = "bi2014a"
-BI_2014b = "bi2014b"
-BI_2015a = "bi2015a"
-BI_2015b = "bi2015b"
-ALPHA = "alpha"
-PHMD = "phmd"
-VR = "vr"
-
-BIs = [BI_2012, BI_2013, BI_2014a, BI_2014b, BI_2015a, BI_2015b]
-ALPHAs = [ALPHA, PHMD]
-ERPs = [*BIs, VR]
-ALL = [*ERPs, *ALPHAs]
-
-
-GET_SCORES_IN = "get-scores-in"
-USING = "using"
-SEPARATOR = ","
-ASSIGNATION = "="
-LIST_SEPARATOR = ";"
-LIST_BRAC_IN = "["
-LIST_BRAC_OUT = "]"
-CACHE = "@cache"
-FOR = 'for'
+DATABASES = 1
+VALUES = 0
 
 
 def startAndWaitForServer():
@@ -39,11 +18,11 @@ def startAndWaitForServer():
     return
 
 
-def __write_condition__(bdds, bdd, value, key):
+def __write_condition__(bdds, bdd, valuesAndDatabase, key):
     bdds[bdd] = True
     _for = FOR + ' ' + bdd
     return key + ASSIGNATION + \
-        str(value[0]).replace(',', LIST_SEPARATOR) + \
+        str(valuesAndDatabase[VALUES]).replace(',', LIST_SEPARATOR) + \
         ' ' + _for + SEPARATOR + ' '
 
 
@@ -64,23 +43,25 @@ class ClientRequest():
     def __getitem__(self, key):
         return self.using[key]
 
-    def __setitem__(self, key, value):
-        self.using[key] = value
+    def __setitem__(self, key, valuesAndDatabase):
+        self.using[key] = valuesAndDatabase
 
     def __build_pload__(self):
-        self.pload = CACHE if self.isCache else ''
-        self.pload += ' ' + GET_SCORES_IN
+        self.pload = CACHE + ' ' if self.isCache else ''
+        self.pload += GET_SCORES_IN
 
         bdds = {}
         conditions = ''
-        for key, value in self.using.items():
+        for key, valuesAndDatabase in self.using.items():
             _for = ''
-            bdd = value[1]
+            bdd = valuesAndDatabase[DATABASES]
             if(not type(bdd) == list):
-                conditions += __write_condition__(bdds, bdd, value, key)
+                conditions += __write_condition__(bdds,
+                                                  bdd, valuesAndDatabase, key)
             else:
                 for b in bdd:
-                    conditions += __write_condition__(bdds, b, value, key)
+                    conditions += __write_condition__(bdds,
+                                                      b, valuesAndDatabase, key)
 
         for key in bdds:
             self.pload += ' ' + key + SEPARATOR
@@ -93,7 +74,6 @@ class ClientRequest():
             self.__build_pload__()
         else:
             self.pload = str_request
-        print(self.pload)
         connection = http.client.HTTPConnection("localhost:8585")
         connection.request("GET", "/request?" + self.pload.replace(" ", "%20"))
         response = connection.getresponse()
@@ -102,12 +82,12 @@ class ClientRequest():
         return literal_eval(response.readline().decode("utf-8"))
 
 
-request = ClientRequest()
-request.useCache(True)
-request['subject'] = ([1], BI_2013)
-request['tmax'] = ([0.7, 0.8, 'VR'], ALL)
+# request = ClientRequest()
+# request.useCache(True)
+# request['subject'] = ([1], BI_2012)
+# request['tmax'] = ([0.7], BI_2012)
 
-print(request.execute())
+# print(request.execute())
 
-print(request.execute(
-    "@cache get-scores-in bi2012 using subject=[1], tmax=[0.7]"))
+# print(request.execute(
+#     "@cache get-scores-in bi2012 using subject=[1], tmax=[0.7]"))

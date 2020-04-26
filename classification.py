@@ -104,7 +104,11 @@ def classify_2013(dataset, params, store):
 
         data = get_data(dataset, lz.subject)
 
-        raw = data[lz.session]['run_3']
+        try:
+            raw = data[lz.session]['run_3']
+        except:
+            print(session, 'is unknown')
+            continue
 
         base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 

@@ -44,9 +44,10 @@ try:
         # Create a web server and define the handler to manage the
         # incoming request
         server = HTTPServer(('', PORT_NUMBER), apiCall)
+        server.timeout = 10
         print('Started httpserver on port ', PORT_NUMBER)
 
-        # Wait forever for incoming htto requests
+        # Wait forever for incoming http requests
         server.serve_forever()
 
 except KeyboardInterrupt:

@@ -68,6 +68,5 @@ def run_request(str_request):
         params = request['phmd']
         score = classification.classify_alpha(dataset_phmd, params, store)
         result.update(score)
-    store.save()
+    store.close()
     return result
-

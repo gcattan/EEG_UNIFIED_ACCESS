@@ -161,5 +161,15 @@
     "bdd=bi2014a;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=61;validation=erp_cov;fmin=1;fmax=20;": 0.7158102381557759,
     "bdd=bi2014a;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=62;validation=erp_cov;fmin=1;fmax=20;": 0.5094601237392998,
     "bdd=bi2014a;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=63;validation=erp_cov;fmin=1;fmax=20;": 0.600204081632653,
-    "bdd=bi2014a;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=64;validation=erp_cov;fmin=1;fmax=20;": 0.6367692336859667
+    "bdd=bi2014a;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=64;validation=erp_cov;fmin=1;fmax=20;": 0.6367692336859667,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=1;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.9868618802581066,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=2;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=3;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=4;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=5;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=6;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=7;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=8;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=9;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=10;validation=erp_cov;fmin=1;fmax=20;pair=1;xpdesign=cola;": 0.8974434370660787
 }

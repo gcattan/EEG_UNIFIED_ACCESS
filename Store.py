@@ -29,4 +29,6 @@ class Store():
         self.f.seek(0)
         json.dump(self.cache, self.f)
         self.f.truncate()
+
+    def close(self):
         self.f.close()

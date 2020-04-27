@@ -58,6 +58,7 @@ def use_store(params, store, key, validationName, *args):
         else:
             ret = validation_method(*args)
             store[key] = ret
+            store.save()
     else:
         ret = validation_method(*args)
     return ret
@@ -107,7 +108,7 @@ def classify_2013(dataset, params, store):
         try:
             raw = data[lz.session]['run_3']
         except:
-            print(session, 'is unknown')
+            print('session unknown')
             continue
 
         base_filter(raw, lz.fmin, lz.fmax, lz.fs)
@@ -156,7 +157,11 @@ def classify_2014b(dataset, params, store):
         sessions = dataset._get_single_pair_data(pair=lz.pair)
 
         if lz.xpdesign == 'solo':
-            raw = sessions['solo_' + str(lz.subject)]['run_1']
+            try:
+                raw = sessions['solo_' + str(lz.subject)]['run_1']
+            except:
+                print('session unknown')
+                continue
         else:
             raw = sessions['collaborative']['run_1']
 

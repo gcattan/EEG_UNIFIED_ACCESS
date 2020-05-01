@@ -20,7 +20,11 @@ class Store():
         self.cache[str(key)] = value
 
     def __contains__(self, key):
-        return str(key) in self.cache
+        try:
+            if(key[0].use_cache):
+                return str(key[1]) in self.cache
+        except:
+            return str(key) in self.cache
 
     def select(self, keywords):
         return [(x, self[x]) for x in self.cache if __key_contains_keywords__(x, keywords)]

@@ -215,22 +215,24 @@ def classify_2015b(dataset, params, store):
     for lz in params.get_bi2015b(dataset):
 
         print('running', str(lz))
+        X, y = [], []
+        if not (params, lz) in store:
 
-        sessions = dataset._get_single_pair_data(pair=lz.pair)
+            sessions = dataset._get_single_pair_data(pair=lz.pair)
 
-        raw = sessions[lz.session]['run_1']
+            raw = sessions[lz.session]['run_1']
 
-        pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
-                                     32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
+            pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
+                                         32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
 
-        raw = raw.copy().pick_channels(pick_channels)
+            raw = raw.copy().pick_channels(pick_channels)
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scores[str(lz)] = use_store(params, store, lz, lz.validation,
                                     X, y, lz.condition, class_info_std)

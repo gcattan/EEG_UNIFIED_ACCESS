@@ -126,7 +126,7 @@ class Parameters():
     def __base__(self, dataset, subject=None):
         return __to_variadic_args__(condition=self.params['condition'], tmin=self.params['tmin'], tmax=self.params['tmax'],
                                     fs=self.params['fs'], subject=self.__compute_subjects__(
-            dataset), validation=self.params['validation'],
+            dataset) if subject == None else subject, validation=self.params['validation'],
             fmin=self.params['fmin'], fmax=self.params['fmax'])
 
     def get_bi2012(self, dataset):

@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "julia",
+            "request": "launch",
+            "name": "Julia : Fichier actuel",
+            "program": "${file}",
+            "stopOnEntry": false
+        },
+        {
             "name": "Python : Fichier actuel",
             "type": "python",
             "request": "launch",

@@ -27,6 +27,9 @@ class apiCall(BaseHTTPRequestHandler):
         if(action == "request"):
             answer = str(run_request(params))
             self.send_response(200)
+        elif(action == 'ping'):
+            answer = "ok"
+            self.send_response(200)
         else:
             self.send_response(400)
             answer = "Action '" + str(action) + "' is not valid"

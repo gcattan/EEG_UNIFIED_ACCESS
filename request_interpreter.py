@@ -1,14 +1,18 @@
 from parameters import Parameters, get_dflt
 from terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
-    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE
+    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH
 
 
 def __clean__(string):
-    return string.replace(" ", "")
+    return string.replace(" ", "")  # .replace("\"'", "").replace("'\"", "")
 
 
 def __btwn__(string, left_limitator, right_limitator):
     return string.split(left_limitator)[1].split(right_limitator)[0]
+
+
+def __keywords__(string):
+    return [x.replace("'", "") for x in __btwn__(string, WITH + LIST_BRAC_IN, LIST_BRAC_OUT).split(SEPARATOR)]
 
 
 def __get_bdds__(request):
@@ -85,7 +89,8 @@ def interpret(request):
     bdds = __get_bdds__(request)
     cdts = __get_conditions__(request)
     use_store = __is_cache_request(request)
-    return __get_params__(bdds, cdts, use_store)
+    keywords = __keywords__(request)
+    return {'request': __get_params__(bdds, cdts, use_store), 'keywords': keywords}
 
 
 # request = "@cache get-scores-in bi2012, bi2013 using subject=all, condition=[VR; PC; 1] for bi2012"

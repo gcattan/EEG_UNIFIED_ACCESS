@@ -5,7 +5,7 @@ import os
 import time
 import subprocess
 from terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
-    CACHE, USING, GET_SCORES_IN
+    CACHE, USING, GET_SCORES_IN, WITH
 
 DATABASES = 1
 VALUES = 0
@@ -31,11 +31,15 @@ class ClientRequest():
     def __init__(self):
         self.pload = ""
         self.isCache = True
+        self.keywords = []
         self.using = {}
         startAndWaitForServer()
 
     def useCache(self, isCache):
         self.isCache = isCache
+
+    def setKeywords(self, keywords):
+        self.keywords = keywords
 
     def __contains__(self, key):
         return key in self.using
@@ -48,6 +52,8 @@ class ClientRequest():
 
     def __build_pload__(self):
         self.pload = CACHE + ' ' if self.isCache else ''
+        self.pload += WITH + \
+            str(self.keywords) + ' ' if len(self.keywords) > 0 else ''
         self.pload += GET_SCORES_IN
 
         bdds = {}

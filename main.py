@@ -1,9 +1,10 @@
 from client import ClientRequest
-from terminal_symbols import BI_2012, BI_2013, BI_2014b
+from terminal_symbols import VR
 
 request = ClientRequest()
 request.useCache(True)
-request['subject'] = ('all', BI_2014b)
+request.setKeywords(["subject=1", "pair=5"])
+request['subject'] = ('all', VR)
 # request['tmax'] = ([0.7], BI_2012)
-
-print(request.execute())
+answer = request.execute()
+print(answer)

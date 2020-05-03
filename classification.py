@@ -265,25 +265,29 @@ def classify_vr(dataset, params, store):
     scr = {}
     for lz in params.get_vr(dataset):
         print('running', lz)
-        paradigm.tmax = lz.tmax
-        paradigm.tmin = lz.tmin
-        paradigm.fmin = lz.fmin
-        paradigm.fmax = lz.fmax
-        paradigm.resample = lz.fs
+        X, y = [], []
+        X_training, labels_training, X_test, labels_test = [], [], [], []
+        if not (params, lz) in store:
 
-        # define the dataset instance
-        dataset.VR = True if lz.xpdesign is 'VR' else False
-        dataset.PC = True if lz.xpdesign is 'PC' else False
+            paradigm.tmax = lz.tmax
+            paradigm.tmin = lz.tmin
+            paradigm.fmin = lz.fmin
+            paradigm.fmax = lz.fmax
+            paradigm.resample = lz.fs
 
-        # get the epochs and labels
-        X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
-        labels = LabelEncoder().fit_transform(labels)
+            # define the dataset instance
+            dataset.VR = True if lz.xpdesign is 'VR' else False
+            dataset.PC = True if lz.xpdesign is 'PC' else False
 
-        # split in training and testing blocks
-        X_training, labels_training, _ = get_block_repetition(
-            X, labels, meta, lz.subset['train'], lz.repetitions)
-        X_test, labels_test, _ = get_block_repetition(
-            X, labels, meta, lz.subset['test'], lz.repetitions)
+            # get the epochs and labels
+            X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])
+            labels = LabelEncoder().fit_transform(labels)
+
+            # split in training and testing blocks
+            X_training, labels_training, _ = get_block_repetition(
+                X, labels, meta, lz.subset['train'], lz.repetitions)
+            X_test, labels_test, _ = get_block_repetition(
+                X, labels, meta, lz.subset['test'], lz.repetitions)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X_training, labels_training, X_test, labels_test, lz.condition, class_info_vr)

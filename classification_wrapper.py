@@ -30,7 +30,9 @@ dataset_phmd = HeadMountedDisplay(useMontagePosition=False)
 
 def run_request(str_request):
     store = Store()
-    request = interpret(str_request)
+    request_and_keywords = interpret(str_request)
+    request = request_and_keywords['request']
+    keywords = request_and_keywords["keywords"]
     result = {}
     if('bi2012' in request):
         params = request['bi2012']
@@ -68,5 +70,6 @@ def run_request(str_request):
         params = request['phmd']
         score = classification.classify_alpha(dataset_phmd, params, store)
         result.update(score)
+    selection = store.select(keywords)
     store.close()
-    return result
+    return {'result': result, 'selection': selection}

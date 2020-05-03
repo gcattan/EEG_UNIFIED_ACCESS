@@ -8,6 +8,7 @@ LIST_BRAC_IN = "["
 LIST_BRAC_OUT = "]"
 CACHE = "@cache"
 FOR = 'for'
+WITH = "@with"
 
 BI_2012 = "bi2012"
 BI_2013 = "bi2013"

@@ -259,7 +259,7 @@ def classify_alpha(dataset, params, store):
     return scr
 
 
-def classify_vr(dataset, params, stores):
+def classify_vr(dataset, params, store):
     # get the paradigm
     paradigm = P300()
     scr = {}

@@ -70,18 +70,19 @@ def classify_2012(dataset, params, store):
     for lz in params.get_bi2012(dataset):
 
         print('running', lz)
+        X, y = [], []
+        if not (params, lz) in store:
+            dataset.Training = lz.training
 
-        dataset.Training = lz.training
+            data = get_data(dataset, lz.subject)
+            raw = data['session_1']['run_training']
 
-        data = get_data(dataset, lz.subject)
-        raw = data['session_1']['run_training']
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            events, epochs = epoching(
+                raw, lz.tmin, lz.tmax, class_info_std)
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
-        events, epochs = epoching(
-            raw, lz.tmin, lz.tmax, class_info_std)
-
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_std)
@@ -97,27 +98,28 @@ def classify_2013(dataset, params, store):
     for lz in params.get_bi2013(dataset):
 
         print('running', lz)
+        X, y = [], []
+        if not (params, lz) in store:
+            dataset.NonAdaptive = lz.nonadaptive
+            dataset.Adaptive = lz.adaptive
+            dataset.Training = lz.training
+            dataset.online = lz.online
 
-        dataset.NonAdaptive = lz.nonadaptive
-        dataset.Adaptive = lz.adaptive
-        dataset.Training = lz.training
-        dataset.online = lz.online
+            data = get_data(dataset, lz.subject)
 
-        data = get_data(dataset, lz.subject)
+            try:
+                raw = data[lz.session]['run_3']
+            except:
+                print('session unknown')
+                continue
 
-        try:
-            raw = data[lz.session]['run_3']
-        except:
-            print('session unknown')
-            continue
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            events, epochs = epoching(
+                raw, lz.tmin, lz.tmax, class_info_2013)
 
-        events, epochs = epoching(
-            raw, lz.tmin, lz.tmax, class_info_2013)
-
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scores[str(lz)] = use_store(params, store, lz, lz.validation,
                                     X, y, lz.condition, class_info_2013)

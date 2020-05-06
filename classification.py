@@ -134,14 +134,16 @@ def classify_2014a(dataset, params, store):
 
         # load data
         print('running subject', lz)
-        sessions = get_data(dataset, lz.subject)
-        raw = sessions['session_1']['run_1']
+        X, y = [], []
+        if not (params, lz) in store:
+            sessions = get_data(dataset, lz.subject)
+            raw = sessions['session_1']['run_1']
 
-        base_filter(raw, lz.fmin, lz.fmax)
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
+            base_filter(raw, lz.fmin, lz.fmax)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_std)
@@ -155,28 +157,29 @@ def classify_2014b(dataset, params, store):
     for lz in params.get_bi2014b(dataset):
 
         print('running pair', lz)
+        X, y = [], []
+        if not (params, lz) in store:
+            sessions = dataset._get_single_pair_data(pair=lz.pair)
 
-        sessions = dataset._get_single_pair_data(pair=lz.pair)
+            if lz.xpdesign == 'solo':
+                try:
+                    raw = sessions['solo_' + str(lz.subject)]['run_1']
+                except:
+                    print('session unknown')
+                    continue
+            else:
+                raw = sessions['collaborative']['run_1']
 
-        if lz.xpdesign == 'solo':
-            try:
-                raw = sessions['solo_' + str(lz.subject)]['run_1']
-            except:
-                print('session unknown')
-                continue
-        else:
-            raw = sessions['collaborative']['run_1']
+            pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
+                                         32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
 
-        pick_channels = raw.ch_names[0 if lz.subject == 1 else 32:
-                                     32 if lz.subject == 1 else -1] + [raw.ch_names[-1]]
+            raw = raw.copy().pick_channels(pick_channels)
 
-        raw = raw.copy().pick_channels(pick_channels)
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
-
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scores[str(lz)] = use_store(params, store, lz, lz.validation,
                                     X, y, lz.condition, class_info_std)
@@ -194,16 +197,18 @@ def classify_2015a(dataset, params, store):
     for lz in params.get_bi2015a(dataset):
 
         print('running', lz)
-        sessions = get_data(dataset, lz.subject)
+        X, y = [], []
+        if not (params, lz) in store:
+            sessions = get_data(dataset, lz.subject)
 
-        raw = sessions[lz.session]['run_1']
+            raw = sessions[lz.session]['run_1']
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_std)
 
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_std)
@@ -246,14 +251,16 @@ def classify_alpha(dataset, params, store):
     scr = {}
     for lz in params.get_alpha(dataset):
         print('running', lz)
-        raw = get_data(dataset, lz.subject)
+        X, y = [], []
+        if not (params, lz) in store:
+            raw = get_data(dataset, lz.subject)
 
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_alpha)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_alpha)
 
-        # get trials and labels
-        X, y = get_base_trial_and_label(epochs, events)
+            # get trials and labels
+            X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_alpha)
@@ -303,17 +310,19 @@ def classify_phmd(dataset, params, store):
     for lz in params.get_phmd(dataset):
 
         print('running', lz)
-        # get the raw object with signals from the subject (data will be downloaded if necessary)
-        raw = get_data(dataset, lz.subject)
-        base_filter(raw, lz.fmin, lz.fmax, lz.fs)
+        X, y = [], []
+        if not (params, lz) in store:
+            # get the raw object with signals from the subject (data will be downloaded if necessary)
+            raw = get_data(dataset, lz.subject)
+            base_filter(raw, lz.fmin, lz.fmax, lz.fs)
 
-        dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
+            dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
-        # cut the signals into epochs and get the labels associated to each trial
+            # cut the signals into epochs and get the labels associated to each trial
 
-        events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_phmd)
+            events, epochs = epoching(raw, lz.tmin, lz.tmax, class_info_phmd)
 
-        X, y = get_base_trial_and_label(epochs, events)
+            X, y = get_base_trial_and_label(epochs, events)
 
         scr[str(lz)] = use_store(params, store, lz, lz.validation,
                                  X, y, lz.condition, class_info_phmd)

@@ -48,11 +48,15 @@ try:
         # incoming request
         server = HTTPServer(('', PORT_NUMBER), apiCall)
         server.timeout = 10
+        server.handle_timeout = lambda: (_ for _ in ()).throw(TimeoutError())
         print('Started httpserver on port ', PORT_NUMBER)
 
         # Wait forever for incoming http requests
-        server.serve_forever()
+        while True:
+            server.handle_request()
 
 except KeyboardInterrupt:
     print('^C received, shutting down the web server')
     server.socket.close()
+except TimeoutError:
+    print("Timeout occured")

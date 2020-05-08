@@ -15,6 +15,11 @@ def serverRunning():
     return os.path.exists("server.lock")
 
 
+def autoclean():
+    if(serverRunning()):
+        os.remove("server.lock")
+
+
 def join():
     while serverRunning():
         time.sleep(0.1)

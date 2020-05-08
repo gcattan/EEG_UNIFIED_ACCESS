@@ -12,7 +12,8 @@ def __btwn__(string, left_limitator, right_limitator):
 
 
 def __keywords__(string):
-    return [x.replace("'", "") for x in __btwn__(string, WITH + LIST_BRAC_IN, LIST_BRAC_OUT).split(SEPARATOR)]
+    if(WITH in string):
+        return [x.replace("'", "") for x in __btwn__(string, WITH + LIST_BRAC_IN, LIST_BRAC_OUT).split(SEPARATOR)]
 
 
 def __get_bdds__(request):

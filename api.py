@@ -56,7 +56,12 @@ try:
             server.handle_request()
 
 except KeyboardInterrupt:
-    print('^C received, shutting down the web server')
-    server.socket.close()
+    print('^C received')
 except TimeoutError:
     print("Timeout occured")
+except:
+    print("other error occured")
+finally:
+    print('Shutting down server and releasing lock file')
+    server.socket.close()
+    lock.release()

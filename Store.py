@@ -27,7 +27,8 @@ class Store():
             return str(key) in self.cache
 
     def select(self, keywords):
-        return [(x, self[x]) for x in self.cache if __key_contains_keywords__(x, keywords)]
+        if(keywords):
+            return [(x, self[x]) for x in self.cache if __key_contains_keywords__(x, keywords)]
 
     def save(self):
         self.f.seek(0)

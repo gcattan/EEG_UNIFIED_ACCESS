@@ -11,11 +11,20 @@ DATABASES = 1
 VALUES = 0
 
 
-def startAndWaitForServer():
-    subprocess.Popen(["python", "api.py"])
-    while not os.path.exists("server.lock"):
+def serverRunning():
+    return os.path.exists("server.lock")
+
+
+def join():
+    while serverRunning():
         time.sleep(0.1)
-    return
+
+
+def startAndWaitForServer():
+    if not serverRunning():
+        subprocess.Popen(["python", "api.py"])
+        while not serverRunning():
+            time.sleep(0.1)
 
 
 def __write_condition__(bdds, bdd, valuesAndDatabase, key):

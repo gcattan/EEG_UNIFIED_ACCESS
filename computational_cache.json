@@ -568,5 +568,7 @@
     "bdd=VR;condition=Target;tmin=0.0;tmax=1.0;fs=None;subject=17;validation=erp_cov_vr_pc;fmin=1;fmax=24;repetitions=[1, 2];subset={'train': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]), 'test': array([11, 12])};xpdesign=VR;": 0.575,
     "bdd=VR;condition=Target;tmin=0.0;tmax=1.0;fs=None;subject=18;validation=erp_cov_vr_pc;fmin=1;fmax=24;repetitions=[1, 2];subset={'train': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]), 'test': array([11, 12])};xpdesign=VR;": 0.85,
     "bdd=VR;condition=Target;tmin=0.0;tmax=1.0;fs=None;subject=19;validation=erp_cov_vr_pc;fmin=1;fmax=24;repetitions=[1, 2];subset={'train': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]), 'test': array([11, 12])};xpdesign=VR;": 0.8875,
-    "bdd=VR;condition=Target;tmin=0.0;tmax=1.0;fs=None;subject=20;validation=erp_cov_vr_pc;fmin=1;fmax=24;repetitions=[1, 2];subset={'train': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]), 'test': array([11, 12])};xpdesign=VR;": 0.6875
+    "bdd=VR;condition=Target;tmin=0.0;tmax=1.0;fs=None;subject=20;validation=erp_cov_vr_pc;fmin=1;fmax=24;repetitions=[1, 2];subset={'train': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]), 'test': array([11, 12])};xpdesign=VR;": 0.6875,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=1;validation=erp_cov;fmin=1;fmax=20;pair=2;xpdesign=cola;": 0.9576298701298702,
+    "bdd=bi2014b;condition=Target;tmin=0.0;tmax=0.8;fs=None;subject=2;validation=erp_cov;fmin=1;fmax=20;pair=2;xpdesign=cola;": 0.7877117447769622
 }

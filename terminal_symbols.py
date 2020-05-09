@@ -6,6 +6,8 @@ ASSIGNATION = "="
 LIST_SEPARATOR = ";"
 LIST_BRAC_IN = "["
 LIST_BRAC_OUT = "]"
+FUN_BRAC_IN = "{"
+FUN_BRAC_OUT = "}"
 CACHE = "@cache"
 FOR = 'for'
 WITH = "@with"

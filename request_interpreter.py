@@ -1,6 +1,6 @@
 from parameters import Parameters, get_dflt
 from terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
-    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH
+    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
 
 
 def __clean__(string):
@@ -57,7 +57,11 @@ def __to_int_if_needed(array):
 
 
 def __interpret_value__(value):
-    if(LIST_BRAC_IN in value):
+    if FUN_BRAC_IN in value:
+        return [__btwn__(value, FUN_BRAC_IN, FUN_BRAC_OUT).replace(";", SEPARATOR).replace("\\n", "\n")[2:-2]]
+    if LIST_BRAC_IN in value:
+        # if "@FUN" in value:  # workaround for custom validation method
+        #     return value.split('')
         return __to_int_if_needed(__btwn__(value, LIST_BRAC_IN,
                                            LIST_BRAC_OUT).split(LIST_SEPARATOR))
     return value
@@ -68,7 +72,8 @@ def __get_params_for_bdd__(bdd_name, conditions):
     for cdt, bdd in conditions:
         if(bdd == bdd_name or bdd == ALL):
             name_value = cdt.split(ASSIGNATION)
-            ret[name_value[0]] = __interpret_value__(name_value[1])
+            ret[name_value[0]] = __interpret_value__(
+                ASSIGNATION.join(name_value[1:]))
     return ret
 
 

@@ -14,6 +14,12 @@ def __get__proto__class__(class_name, class_info):
     return [class_info[class_name]]
 
 
+def custom(*args):
+    local_variables = {'args': args}
+    exec(args[-1], globals(), local_variables)
+    return local_variables['ret']
+
+
 def erp_cov(X, y, class_name, class_info):
     c = __get__proto__class__(class_name, class_info)
     skf = StratifiedKFold(n_splits=5)

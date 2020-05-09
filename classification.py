@@ -51,16 +51,19 @@ def get_base_trial_and_label(epochs, events):
 
 
 def use_store(params, store, key, validationName, *args):
-    validation_method = getattr(cross_validation, validationName)
+    try:
+        validation_method = getattr(cross_validation, validationName)
+    except:
+        validation_method = getattr(cross_validation, "custom")
     if params.use_cache:
         if key in store:
             ret = store[key]
         else:
-            ret = validation_method(*args)
+            ret = validation_method(*args, validationName)
             store[key] = ret
             store.save()
     else:
-        ret = validation_method(*args)
+        ret = validation_method(*args, validationName)
     return ret
 
 

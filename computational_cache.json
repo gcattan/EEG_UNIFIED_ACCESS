@@ -694,4 +694,4 @@
     "bdd=PHMD;condition=OFF;tmin=10;tmax=50;fs=128;subject=10;validation=cov;fmin=1;fmax=35;": 0.5,
     "bdd=PHMD;condition=OFF;tmin=10;tmax=50;fs=128;subject=11;validation=cov;fmin=1;fmax=35;": 0.3,
     "bdd=PHMD;condition=OFF;tmin=10;tmax=50;fs=128;subject=12;validation=cov;fmin=1;fmax=35;": 0.7
-}s
+}

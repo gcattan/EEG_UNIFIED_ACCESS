@@ -17,7 +17,10 @@ def serverRunning():
 
 def autoclean():
     if(serverRunning()):
-        os.remove("server.lock")
+        try:
+            os.remove("server.lock")
+        except:
+            print("Failed to delete lock file: server is already running.")
 
 
 def join():

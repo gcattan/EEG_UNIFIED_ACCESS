@@ -1,13 +1,13 @@
 from virtualreality.utilities import get_block_repetition
 from moabb.paradigms import P300
 from sklearn.preprocessing import LabelEncoder
-from store import Store
-from parameters import *
+from server.store import Store
+from server.parameters import *
 
 import numpy as np
 import mne
 import pandas as pd
-import cross_validation
+import server.cross_validation as cross_validation
 
 
 import warnings

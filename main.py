@@ -1,5 +1,5 @@
 from client import ClientRequest, join, autoclean
-from terminal_symbols import ALL
+from server.terminal_symbols import PHMD
 
 autoclean()
 request = ClientRequest()
@@ -16,7 +16,7 @@ request.useCache(True)
 # """
 
 # request['validation'] = ({validation_method}, PHMD)
-request['subject'] = ('all', ALL)
+request['subject'] = ('all', PHMD)
 # request['tmax'] = ([0.7], BI_2012)
 answer = request.execute()
 print(answer)

@@ -17,7 +17,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
-        }
+        },
         {
             "name": "Python : main.py",
             "type": "python",

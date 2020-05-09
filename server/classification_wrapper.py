@@ -8,10 +8,10 @@ from alphawaves.dataset import AlphaWaves
 from headmounted.dataset import HeadMountedDisplay
 from virtualreality.dataset import VirtualReality
 
-from store import Store
-import parameters as params
-import classification
-from request_interpreter import interpret
+from server.store import Store
+import server.parameters as params
+import server.classification as classification
+from server.request_interpreter import interpret
 
 dataset_2012 = BrainInvaders2012(Training=True)
 dataset_2013 = BrainInvaders2013(

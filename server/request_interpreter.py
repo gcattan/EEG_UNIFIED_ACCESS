@@ -1,5 +1,5 @@
-from parameters import Parameters, get_dflt
-from terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
+from server.parameters import Parameters, get_dflt
+from server.terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
     LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
 
 

@@ -68,7 +68,7 @@ def run_request(str_request):
         result.update(score)
     if('phmd' in request):
         params = request['phmd']
-        score = classification.classify_alpha(dataset_phmd, params, store)
+        score = classification.classify_phmd(dataset_phmd, params, store)
         result.update(score)
     selection = store.select(keywords)
     store.close()

@@ -93,6 +93,12 @@ class Parameters():
             return random.sample(dataset_subjects, int(numberOfsubjects * percent / 100))
         return subject
 
+    def __compute_paired_subject(self):
+        subject = self.params['subject']
+        if subject == 'all':
+            return [1, 2]
+        return subject
+
     def __compute_session_2013__(self):
         session = self.params['session']
         if session == 'all':
@@ -143,7 +149,7 @@ class Parameters():
 
     # subject/ 1 or 2. Pair = same as subject for other datasets
     def get_bi2014b(self, dataset):
-        return lz(bdd=['bi2014b'], **self.__base__(dataset, subject=self.params['subject']),
+        return lz(bdd=['bi2014b'], **self.__base__(dataset, subject=self.__compute_paired_subject()),
                   pair=self.__compute_subjects__(dataset), xpdesign=['cola', 'solo'])
 
     def get_bi2015a(self, dataset):
@@ -151,7 +157,7 @@ class Parameters():
                   session=self.__compute_session_2015a__())
 
     def get_bi2015b(self, dataset):
-        return lz(bdd=['bi2015b'], **self.__base__(dataset, subject=self.params['subject']),
+        return lz(bdd=['bi2015b'], **self.__base__(dataset, subject=self.__compute_paired_subject()),
                   pair=self.__compute_subjects__(dataset), session=self.__compute_session_2015b__())
 
     def get_alpha(self, dataset):

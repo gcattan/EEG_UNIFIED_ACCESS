@@ -1,5 +1,5 @@
 from client import ClientRequest, join, autoclean
-from server.terminal_symbols import PHMD
+from terminal_symbols import PHMD
 
 autoclean()
 request = ClientRequest()

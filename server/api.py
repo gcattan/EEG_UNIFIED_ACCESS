@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from classification_wrapper import run_request
+from classif.classification_wrapper import run_request
 from filelock import FileLock
 
 PORT_NUMBER = 8585

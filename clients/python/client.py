@@ -4,7 +4,7 @@ import http.client
 import os
 import time
 import subprocess
-from server.terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
+from terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
     CACHE, USING, GET_SCORES_IN, WITH
 
 DATABASES = 1

@@ -10,7 +10,7 @@ def __key_contains_keywords__(key, keywords):
 
 class Store():
     def __init__(self):
-        self.f = open('server/computational_cache.json', 'r+')
+        self.f = open('server/utils/computational_cache.json', 'r+')
         self.cache = json.load(self.f)
 
     def __getitem__(self, key):

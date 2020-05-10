@@ -1,4 +1,4 @@
-from lazy_product import LazyProduct as lz
+from utils.lazy_product import LazyProduct as lz
 from sklearn.model_selection import KFold
 import numpy as np
 import random

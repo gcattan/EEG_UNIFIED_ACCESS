@@ -22,7 +22,7 @@
             "name": "Python : main.py",
             "type": "python",
             "request": "launch",
-            "program": "main.py",
+            "program": "clients/python/main.py",
             "console": "integratedTerminal"
         }
     ]

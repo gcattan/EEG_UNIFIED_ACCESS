@@ -9,6 +9,7 @@ rmdir .\server\headmounted
 rmdir .\server\alphawaves
 rmdir .\server\virtualreality
 rmdir .\server\moabb
+del .\clients\python\terminal_symbols.py
 mklink /j ".\server\braininvaders2012" ".\server\dependencies\py.BI.EEG.2012-GIPSA\braininvaders2012"
 mklink /j ".\server\braininvaders2013" ".\server\dependencies\py.BI.EEG.2013-GIPSA\braininvaders2013"
 mklink /j ".\server\braininvaders2014a" ".\server\dependencies\py.BI.EEG.2014a-GIPSA\braininvaders2014a"
@@ -19,3 +20,4 @@ mklink /j ".\server\headmounted" ".\server\dependencies\py.PHMDML.EEG.2017-GIPSA
 mklink /j ".\server\alphawaves" ".\server\dependencies\py.ALPHA.EEG.2017-GIPSA\alphawaves"
 mklink /j ".\server\virtualreality" ".\server\dependencies\py.VR.EEG.2018-GIPSA\virtualreality"
 mklink /j ".\server\moabb" ".\server\dependencies\NeuroTechX.moabb\moabb"
+mklink /h ".\clients\python\terminal_symbols.py" ".\server\lang\terminal_symbols.py"

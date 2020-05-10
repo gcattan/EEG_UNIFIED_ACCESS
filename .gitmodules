@@ -22,8 +22,8 @@
 [submodule "py.VR.EEG.2018-GIPSA"]
 	path = py.VR.EEG.2018-GIPSA
 	url = https://github.com/plcrodrigues/py.VR.EEG.2018-GIPSA.git
-[submodule "py.ALPHA.EEG.2017-GIPSA"]
-	path = py.ALPHA.EEG.2017-GIPSA
+[submodule "server/dependencies/py.ALPHA.EEG.2017-GIPSA"]
+	path = server/dependencies/py.ALPHA.EEG.2017-GIPSA
 	url = https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA.git
 [submodule "NeuroTechX.moabb"]
 	path = NeuroTechX.moabb

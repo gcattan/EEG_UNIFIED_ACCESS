@@ -30,7 +30,7 @@ def join():
 
 def startAndWaitForServer():
     if not serverRunning():
-        subprocess.Popen(["python", "api.py"])
+        subprocess.Popen(["python", "server/api.py"])
         while not serverRunning():
             time.sleep(0.1)
 

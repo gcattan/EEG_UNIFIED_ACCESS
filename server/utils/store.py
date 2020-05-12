@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def __key_contains_keywords__(key, keywords):
@@ -10,7 +11,8 @@ def __key_contains_keywords__(key, keywords):
 
 class Store():
     def __init__(self):
-        self.f = open('server/utils/computational_cache.json', 'r+')
+        self.f = open(os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), 'computational_cache.json'), 'r+')
         self.cache = json.load(self.f)
 
     def __getitem__(self, key):

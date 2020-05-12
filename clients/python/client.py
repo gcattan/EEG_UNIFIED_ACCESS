@@ -30,7 +30,8 @@ def join():
 
 def startAndWaitForServer():
     if not serverRunning():
-        subprocess.Popen(["python", "server/api.py"])
+        subprocess.Popen(["python", "../../server/api.py"],
+                         cwd=os.path.dirname(os.path.realpath(__file__)))
         while not serverRunning():
             time.sleep(0.1)
 

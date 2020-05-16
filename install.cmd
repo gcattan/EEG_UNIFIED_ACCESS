@@ -1,10 +1,11 @@
 echo off
 
+REM update dependencies
 git submodule init
 git submodule update
 git submodule foreach "(git checkout master;git pull)&"
 
-
+REM create hardlinks
 rmdir .\server\braininvaders2012
 rmdir .\server\braininvaders2013
 rmdir .\server\braininvaders2014a
@@ -28,4 +29,5 @@ mklink /j ".\server\virtualreality" ".\server\dependencies\py.VR.EEG.2018-GIPSA\
 mklink /j ".\server\moabb" ".\server\dependencies\NeuroTechX.moabb\moabb"
 mklink /h ".\clients\python\terminal_symbols.py" ".\server\lang\terminal_symbols.py"
 
+REM install python dependencies
 pip install -r requirements.txt

@@ -24,6 +24,8 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+node_modules/
+*.lock
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -103,7 +105,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#hardlink
+# hardlink
 virtualreality/
 headmounted/
 alphawaves/
@@ -114,3 +116,5 @@ braininvaders2014a/
 braininvaders2014b/
 braininvaders2015a/
 braininvaders2015b/
+
+

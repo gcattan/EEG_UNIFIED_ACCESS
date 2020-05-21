@@ -1,5 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from classif.classification_wrapper import run_request
+if __package__ is None or __package__ == '':
+    from classif.classification_wrapper import run_request
+else:
+    from .classif.classification_wrapper import run_request
 from filelock import FileLock
 
 PORT_NUMBER = 8585

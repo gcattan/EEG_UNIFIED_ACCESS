@@ -1,4 +1,8 @@
-from braininvaders2012.dataset import BrainInvaders2012
+if __package__ is None or __package__ == 'classif':
+    from braininvaders2012.dataset import BrainInvaders2012
+else:
+    from ..braininvaders2012.dataset import BrainInvaders2012
+
 from braininvaders2013.dataset import BrainInvaders2013
 from braininvaders2014a.dataset import BrainInvaders2014a
 from braininvaders2014b.dataset import BrainInvaders2014b

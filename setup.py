@@ -14,7 +14,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="eeguni-GCATTAN", # Replace with your own username
-    version="0.2",
+    version="2.3",
     author="Gregoire Cattan",
     author_email="gcattan@hotmail.fr",
     description="A server/client wrapper for EEG datasets",
@@ -29,8 +29,8 @@ setuptools.setup(
         "Development Status :: 3 - Alpha",
         "Topic :: Scientific/Engineering"
     ],
-    cmdclass={
-        'install': PostInstallCommand,
-    },
+    # cmdclass={
+    #     'install': PostInstallCommand,
+    # },
     python_requires='>=3.6',
 )

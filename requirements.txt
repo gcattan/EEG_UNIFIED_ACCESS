@@ -1,9 +1,9 @@
-numpy==1.17.2
+numpy==1.17.3
 mne==0.19
 pyriemann==0.2.5
 setuptools==41.0.1
 scipy==1.1.0
-matplotlib==3.0.2
+matplotlib==3.2.1
 scikit_learn==0.20.3
 pandas==0.25.1
 tqdm==4.28.1

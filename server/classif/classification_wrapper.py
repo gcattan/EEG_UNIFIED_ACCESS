@@ -1,16 +1,24 @@
 if __package__ is None or __package__ == 'classif':
     from braininvaders2012.dataset import BrainInvaders2012
+    from braininvaders2013.dataset import BrainInvaders2013
+    from braininvaders2014a.dataset import BrainInvaders2014a
+    from braininvaders2014b.dataset import BrainInvaders2014b
+    from braininvaders2015a.dataset import BrainInvaders2015a
+    from braininvaders2015b.dataset import BrainInvaders2015b
+    from alphawaves.dataset import AlphaWaves
+    from headmounted.dataset import HeadMountedDisplay
+    from virtualreality.dataset import VirtualReality
 else:
     from ..braininvaders2012.dataset import BrainInvaders2012
+    from ..braininvaders2013.dataset import BrainInvaders2013
+    from ..braininvaders2014a.dataset import BrainInvaders2014a
+    from ..braininvaders2014b.dataset import BrainInvaders2014b
+    from ..braininvaders2015a.dataset import BrainInvaders2015a
+    from ..braininvaders2015b.dataset import BrainInvaders2015b
+    from ..alphawaves.dataset import AlphaWaves
+    from ..headmounted.dataset import HeadMountedDisplay
+    from ..virtualreality.dataset import VirtualReality
 
-from braininvaders2013.dataset import BrainInvaders2013
-from braininvaders2014a.dataset import BrainInvaders2014a
-from braininvaders2014b.dataset import BrainInvaders2014b
-from braininvaders2015a.dataset import BrainInvaders2015a
-from braininvaders2015b.dataset import BrainInvaders2015b
-from alphawaves.dataset import AlphaWaves
-from headmounted.dataset import HeadMountedDisplay
-from virtualreality.dataset import VirtualReality
 
 from utils.store import Store
 import classif.parameters as params

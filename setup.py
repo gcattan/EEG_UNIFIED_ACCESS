@@ -7,14 +7,17 @@ class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
-        check_call("install.cmd".split())
+        check_call("pip install -r requirements.txt".split())
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+# with open("requirements.txt", "r") as fr:
+#     requirements = fr.readlines()
+
 setuptools.setup(
     name="eeguni-GCATTAN", # Replace with your own username
-    version="2.3",
+    version="3.1",
     author="Gregoire Cattan",
     author_email="gcattan@hotmail.fr",
     description="A server/client wrapper for EEG datasets",
@@ -29,8 +32,10 @@ setuptools.setup(
         "Development Status :: 3 - Alpha",
         "Topic :: Scientific/Engineering"
     ],
-    # cmdclass={
-    #     'install': PostInstallCommand,
-    # },
+    cmdclass={
+        'install': PostInstallCommand,
+    },
+    # install_requires=['mne'],
     python_requires='>=3.6',
+    include_package_data=True
 )

@@ -8,6 +8,8 @@ class PostInstallCommand(install):
     def run(self):
         install.run(self)
         check_call("pip install -r requirements.txt".split())
+        # check_call("python ./server/dependencies/NeuroTechX.moabb/setup.py develop".split())
+        
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -17,7 +19,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="eeguni-GCATTAN", # Replace with your own username
-    version="3.1",
+    version="5.3",
     author="Gregoire Cattan",
     author_email="gcattan@hotmail.fr",
     description="A server/client wrapper for EEG datasets",

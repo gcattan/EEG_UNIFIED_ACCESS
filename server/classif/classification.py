@@ -1,8 +1,8 @@
-from virtualreality.utilities import get_block_repetition
-from moabb.paradigms import P300
+from ..virtualreality.utilities import get_block_repetition
+from ..moabb.paradigms import P300
 from sklearn.preprocessing import LabelEncoder
-from utils.store import Store
-from classif.parameters import *
+from ..utils.store import Store
+from ..classif.parameters import *
 
 import numpy as np
 import mne

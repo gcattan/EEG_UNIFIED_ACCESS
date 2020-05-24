@@ -1,4 +1,5 @@
 if __package__ is None or __package__ == 'classif':
+    from virtualreality.dataset import VirtualReality
     from braininvaders2012.dataset import BrainInvaders2012
     from braininvaders2013.dataset import BrainInvaders2013
     from braininvaders2014a.dataset import BrainInvaders2014a
@@ -7,7 +8,10 @@ if __package__ is None or __package__ == 'classif':
     from braininvaders2015b.dataset import BrainInvaders2015b
     from alphawaves.dataset import AlphaWaves
     from headmounted.dataset import HeadMountedDisplay
-    from virtualreality.dataset import VirtualReality
+    from utils.store import Store
+    from lang.request_interpreter import interpret
+    import classif.parameters as params
+    import classif.classification as classification
 else:
     from ..braininvaders2012.dataset import BrainInvaders2012
     from ..braininvaders2013.dataset import BrainInvaders2013
@@ -18,12 +22,15 @@ else:
     from ..alphawaves.dataset import AlphaWaves
     from ..headmounted.dataset import HeadMountedDisplay
     from ..virtualreality.dataset import VirtualReality
+    from ..utils.store import Store
+    from ..lang.request_interpreter import interpret
+    from ..classif import parameters as params
+    from ..classif import classification
+    # import ..classif.parameters as params
+    # import ..classif.classification as classification
 
 
-from utils.store import Store
-import classif.parameters as params
-import classif.classification as classification
-from lang.request_interpreter import interpret
+
 
 dataset_2012 = BrainInvaders2012(Training=True)
 dataset_2013 = BrainInvaders2013(

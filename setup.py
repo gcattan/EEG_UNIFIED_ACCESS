@@ -19,7 +19,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="eeguni-GCATTAN", # Replace with your own username
-    version="5.3",
+    version="5.5",
     author="Gregoire Cattan",
     author_email="gcattan@hotmail.fr",
     description="A server/client wrapper for EEG datasets",

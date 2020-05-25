@@ -7,7 +7,7 @@ from ..classif.parameters import *
 import numpy as np
 import mne
 import pandas as pd
-import classif.cross_validation as cross_validation
+from ..classif import cross_validation
 
 
 import warnings

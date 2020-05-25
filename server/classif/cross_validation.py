@@ -1,10 +1,11 @@
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import StratifiedKFold, cross_val_score, KFold
-from sklearn.externals import joblib
+#from sklearn.externals import joblib
 from sklearn.metrics import roc_auc_score
 
 from pyriemann.classification import MDM
 from pyriemann.estimation import ERPCovariances, Covariances
+import joblib
 
 
 def __get__proto__class__(class_name, class_info):

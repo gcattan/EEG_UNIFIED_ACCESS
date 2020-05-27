@@ -1,4 +1,8 @@
-from ..utils.lazy_product import LazyProduct as lz
+if __package__ is None or __package__ == 'utils':
+    from ..utils.lazy_product import LazyProduct as lz
+else:
+    from utils.lazy_product import LazyProduct as lz
+    
 from sklearn.model_selection import KFold
 import numpy as np
 import random

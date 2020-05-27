@@ -1,7 +1,12 @@
-from ..classif.parameters import Parameters, get_dflt
-from ..lang.terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
-    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
 
+try:
+    from ..classif.parameters import Parameters, get_dflt
+    from ..lang.terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
+    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
+except:
+    from classif.parameters import Parameters, get_dflt
+    from lang.terminal_symbols import GET_SCORES_IN, USING, SEPARATOR, ALL, LIST_SEPARATOR, \
+    LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
 
 def __clean__(string):
     return string.replace(" ", "")  # .replace("\"'", "").replace("'\"", "")

@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-if __package__ is None or __package__ == '':
+try:
     from classif.classification_wrapper import run_request
-else:
+except:
     from .classif.classification_wrapper import run_request
 from filelock import FileLock
 

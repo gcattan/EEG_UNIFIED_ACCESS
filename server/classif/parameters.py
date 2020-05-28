@@ -1,6 +1,6 @@
-if __package__ is None or __package__ == 'utils':
+try:
     from ..utils.lazy_product import LazyProduct as lz
-else:
+except:
     from utils.lazy_product import LazyProduct as lz
     
 from sklearn.model_selection import KFold

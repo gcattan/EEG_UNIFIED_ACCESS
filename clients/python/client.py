@@ -10,10 +10,10 @@ import subprocess
 # symbols = importlib.util.module_from_spec(spec)
 # spec.loader.exec_module(symbols)
 
-if __package__ is None or __package__ == '':
+try:
     from terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
         CACHE, USING, GET_SCORES_IN, WITH
-else:
+except:
     from .terminal_symbols import FOR, ASSIGNATION, LIST_SEPARATOR, SEPARATOR, \
         CACHE, USING, GET_SCORES_IN, WITH
 
@@ -51,10 +51,10 @@ def startAndWaitForServer():
 
 def __write_condition__(bdds, bdd, valuesAndDatabase, key):
     bdds[bdd] = True
-    _for = symbols.FOR + ' ' + bdd
-    return key + symbols.ASSIGNATION + \
-        str(valuesAndDatabase[VALUES]).replace(',', symbols.LIST_SEPARATOR) + \
-        ' ' + _for + symbols.SEPARATOR + ' '
+    _for = FOR + ' ' + bdd
+    return key + ASSIGNATION + \
+        str(valuesAndDatabase[VALUES]).replace(',', LIST_SEPARATOR) + \
+        ' ' + _for + SEPARATOR + ' '
 
 
 class ClientRequest():
@@ -82,10 +82,10 @@ class ClientRequest():
         self.using[key] = valuesAndDatabase
 
     def __build_pload__(self):
-        self.pload = symbols.CACHE + ' ' if self.isCache else ''
-        self.pload += symbols.WITH + \
+        self.pload = CACHE + ' ' if self.isCache else ''
+        self.pload += WITH + \
             str(self.keywords) + ' ' if len(self.keywords) > 0 else ''
-        self.pload += symbols.GET_SCORES_IN
+        self.pload += GET_SCORES_IN
 
         bdds = {}
         conditions = ''
@@ -101,9 +101,9 @@ class ClientRequest():
                                                       b, valuesAndDatabase, key)
 
         for key in bdds:
-            self.pload += ' ' + key + symbols.SEPARATOR
+            self.pload += ' ' + key + SEPARATOR
         self.pload = self.pload[0:-1]
-        self.pload += ' ' + symbols.USING + ' ' + conditions
+        self.pload += ' ' + USING + ' ' + conditions
         self.pload = self.pload[0:-2]
 
     def execute(self, str_request=None):

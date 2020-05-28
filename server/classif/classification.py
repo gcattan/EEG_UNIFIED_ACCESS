@@ -1,13 +1,21 @@
-from ..virtualreality.utilities import get_block_repetition
-from ..moabb.paradigms import P300
-from sklearn.preprocessing import LabelEncoder
-from ..utils.store import Store
-from ..classif.parameters import *
+try:
+    from ..virtualreality.utilities import get_block_repetition
+    from ..moabb.paradigms import P300
+    from ..utils.store import Store
+    from ..classif.parameters import *
+    from ..classif import cross_validation
+except:
+    from virtualreality.utilities import get_block_repetition
+    from moabb.paradigms import P300
+    from utils.store import Store
+    from classif.parameters import *
+    from classif import cross_validation
 
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import mne
 import pandas as pd
-from ..classif import cross_validation
+
 
 
 import warnings
@@ -288,8 +296,8 @@ def classify_vr(dataset, params, store):
             paradigm.resample = lz.fs
 
             # define the dataset instance
-            dataset.VR = True if lz.xpdesign is 'VR' else False
-            dataset.PC = True if lz.xpdesign is 'PC' else False
+            dataset.VR = True if lz.xpdesign == 'VR' else False
+            dataset.PC = True if lz.xpdesign == 'PC' else False
 
             # get the epochs and labels
             X, labels, meta = paradigm.get_data(dataset, subjects=[lz.subject])

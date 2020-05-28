@@ -1,4 +1,4 @@
-if __package__ is None or __package__ == 'classif':
+try:
     from virtualreality.dataset import VirtualReality
     from braininvaders2012.dataset import BrainInvaders2012
     from braininvaders2013.dataset import BrainInvaders2013
@@ -12,7 +12,7 @@ if __package__ is None or __package__ == 'classif':
     from lang.request_interpreter import interpret
     import classif.parameters as params
     import classif.classification as classification
-else:
+except:
     from ..braininvaders2012.dataset import BrainInvaders2012
     from ..braininvaders2013.dataset import BrainInvaders2013
     from ..braininvaders2014a.dataset import BrainInvaders2014a

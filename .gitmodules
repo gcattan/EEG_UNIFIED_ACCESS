@@ -27,4 +27,4 @@
 	url = https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA.git
 [submodule "server/dependencies/NeuroTechX.moabb"]
 	path = server/dependencies/NeuroTechX.moabb
-	url = https://github.com/NeuroTechX/moabb.git
+	url = https://github.com/gcattan/moabb.git

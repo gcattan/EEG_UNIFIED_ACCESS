@@ -1,3 +1,28 @@
+"""
+This module provides LazyProduct for all datasets.
+
+Acceptable parameters are:
+tmin
+tmax
+fmin
+fmax
+subject
+session
+pair
+fs
+validation
+condition
+adaptive
+noadaptive
+training
+online
+xpdesign
+repetitions
+nsplits
+
+"""
+
+# This is a workaround to run this module either from main.py or api.py script
 try:
     from ..utils.lazy_product import LazyProduct as lz
 except:
@@ -12,7 +37,7 @@ import sys
 def __to_variadic_args__(**args):
     return args
 
-
+# We define bellow a set of default parameters
 time_low = __to_variadic_args__(tmin=[0.0], tmax=[0.8])
 freq_std = __to_variadic_args__(fmin=[1], fmax=[24])
 freq_strict = __to_variadic_args__(fmin=[1], fmax=[20])
@@ -29,7 +54,7 @@ def __base_dflts__(condition=['Target'], tmin=[0.0], tmax=[1.0], fs=[None],
                    subject='all', fmin=[1], fmax=[24], validation=['erp_cov']):
     return locals()
 
-
+# bi2012 accepts the following parameter
 def get_dflt_bi2012():
     return __to_variadic_args__(**__base_dflts__(), training=[True])
 
@@ -75,9 +100,11 @@ def get_dflt_vr():
 def get_dflt(bdd):
     return getattr(sys.modules[__name__], "get_dflt_" + bdd)()
 
-
 class Parameters():
+
+    # This object convert parameters into LazyProduct
     def __init__(self, use_cache, **args):
+        # if true, we will use cached result if available
         self.use_cache = use_cache
         self.params = args
 

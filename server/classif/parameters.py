@@ -2,24 +2,45 @@
 This module provides LazyProduct for all datasets.
 
 Acceptable parameters are:
-tmin
-tmax
-fmin
-fmax
-subject
-session
-pair
-fs
-validation
-condition
-adaptive
-noadaptive
-training
-online
-xpdesign
-repetitions
-nsplits
-
+- tmin: epoch start time (0 = onset of the stimulation) in ms [all];
+ eg tmin = [0, 10]
+- tmax: epoch end time (0 = onset of the stimulation) in ms [all];
+ eg tmax = [500, 1000]
+- fmin: minium frequence of the bandpass filter [all];
+ eg fmin = [1, 2]
+- fmax: maximum frequence of the bandpass filter [all];
+ eg fmax = [20, 35]
+- subject: list of subjects to be included [all];
+ eg subject = [1, 2, 3] or subjet = 'all'
+ note that when the 'pair' parameter is enabled, the number of subject cannot be greater than 2
+- session: list of session to be included [bi2013, bi2015a, bi2015b];
+ eg session = [1, 2, 3] or session = 'all'
+- pair: when subjects in experiments are paired, the list of pairs to be included [bi2014b, bi2015b]
+ eg pair = [1, 2, 3] or pair = 'all'
+- fs: sampling frequency [all];
+ eg fs = [None] or fs = [124, 256]
+- validation: classification method to use. There are in classification.py [all];
+ eg validation = ['erp_cov']
+ note that you can also use custom python function written as strings:
+  validation_method = "your awsome function"
+  validation = {validation_method}
+- condition: list of conditions, such as condition = [conditionA, conditionB, ...];
+ for alpha dataset, values are 'closed' or 'open'
+ for phmd dataset, values are 'ON' or 'OFF'
+ for others dataset, values are Target or NonTarget
+- adaptive: if true select epochs with adaptive training [bi2013]
+- nonadaptive: if true select epochs with nonadaptive training [bi2013];
+ examples: nonadaptive=[True], adaptive=[False]
+- training: if true select training epochs [bi2013]
+- online: if true select online epochs [bi2013]
+ examples: training=[True], online=[False]
+- xpdesign: specific to [vr] and [bi2014b];
+ eg xpdesign=['VR' or 'PC']; xpdesign = ['solo', 'cola']
+- repetitions: specific to [vr] dataset;
+ eg repetitions=[[1, 2], [3, 4, 5]] -> average epoch for classification will be computed
+ on the basis of repetitions 1 and 2, then using repetitions 3 to 5
+- nsplits: specific to [vr] dataset; precise the number of KFold split (for crossvalidation)
+ 
 """
 
 # This is a workaround to run this module either from main.py or api.py script

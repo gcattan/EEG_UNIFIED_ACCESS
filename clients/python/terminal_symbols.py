@@ -1,3 +1,7 @@
+"""
+This file list all terminal symbols of the small sql-like request language we built.
+"""
+
 GET_SCORES_IN = "get-scores-in"
 USING = "using"
 SEPARATOR = ","

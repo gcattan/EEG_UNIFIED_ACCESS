@@ -1,8 +1,13 @@
 import json
 import os
 
+"""
+This module store the results of computation in a file called 'computational_cache.json'.
+It provides also a way to filter computational results according to a list of keywords passed as arguments.
+"""
 
 def __key_contains_keywords__(key, keywords):
+    # return ture if the given key in the store contains ALL the keywords passed through arguments.
     for kw in keywords:
         if not kw in key:
             return False

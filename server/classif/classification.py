@@ -1,3 +1,5 @@
+# workaround depending on which script call this module
+
 try:
     from ..virtualreality.utilities import get_block_repetition
     from ..moabb.paradigms import P300
@@ -21,6 +23,11 @@ import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
 
+"""
+This module group all classification method, extracted from the individual file examples in all dataset.
+Parameters of these classification method are exposed in the parameters.py module.
+"""
+
 class_info_std = {'Target': 2, 'NonTarget': 1}
 class_info_vr = {'Target': 1, 'NonTarget': 0}
 class_info_alpha = {'closed': 1, 'open': 2}
@@ -28,16 +35,12 @@ class_info_phmd = {'OFF': 1, 'ON': 2}
 class_info_2013 = {'Target': 33285, 'NonTarget': 33286}
 
 # filter data and resample
-
-
 def base_filter(raw, minf, max, fs=None):
     raw.filter(minf, max, verbose=False)
     if(not fs == None):
         raw.resample(fs, verbose=False)
 
 # detect the events and cut the signal into epochs
-
-
 def epoching(raw, tmin, tmax, event_id):
     events = mne.find_events(raw=raw, shortest_event=1, verbose=False)
     epochs = mne.Epochs(raw, events, event_id, tmin=tmin,
@@ -57,7 +60,11 @@ def get_base_trial_and_label(epochs, events):
         y = epochs.events[:, -1]
     return X, y
 
-
+"""
+If store enabled in parameters, it will return previous computed results, 
+instead of running the validation method.
+*args -> arguments for the validation method.
+"""
 def use_store(params, store, key, validationName, *args):
     try:
         validation_method = getattr(cross_validation, validationName)
@@ -285,7 +292,7 @@ def classify_vr(dataset, params, store):
     scr = {}
     for lz in params.get_vr(dataset):
         print('running', lz)
-        X, y = [], []
+        X = []
         X_training, labels_training, X_test, labels_test = [], [], [], []
         if not (params, lz) in store:
 
@@ -326,8 +333,6 @@ def classify_phmd(dataset, params, store):
             # get the raw object with signals from the subject (data will be downloaded if necessary)
             raw = get_data(dataset, lz.subject)
             base_filter(raw, lz.fmin, lz.fmax, lz.fs)
-
-            dict_channels = {chn: chi for chi, chn in enumerate(raw.ch_names)}
 
             # cut the signals into epochs and get the labels associated to each trial
 

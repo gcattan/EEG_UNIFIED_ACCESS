@@ -1,3 +1,4 @@
+# workaround depending on which script call this module
 try:
     from virtualreality.dataset import VirtualReality
     from braininvaders2012.dataset import BrainInvaders2012
@@ -30,7 +31,11 @@ except:
     # import ..classif.classification as classification
 
 
-
+"""
+This module provides an interface between end-point API (api.py) and classification method.
+It interprets the request and call the appropriate classification method. 
+In addition, it creates also the dataset instances.
+"""
 
 dataset_2012 = BrainInvaders2012(Training=True)
 dataset_2013 = BrainInvaders2013(
@@ -51,6 +56,8 @@ def run_request(str_request):
     store = Store()
     request_and_keywords = interpret(str_request)
     request = request_and_keywords['request']
+    # Keywords are used to conduct independant requests on the store.
+    # Such results will be returns along with the classification results.
     keywords = request_and_keywords["keywords"]
     result = {}
     if('bi2012' in request):

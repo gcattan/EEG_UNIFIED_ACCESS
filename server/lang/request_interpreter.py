@@ -10,26 +10,27 @@ except:
     LIST_BRAC_OUT, LIST_BRAC_IN, ASSIGNATION, CACHE, WITH, FUN_BRAC_IN, FUN_BRAC_OUT
 
 """
-eeguni allows to compute classification requests based a small sql-like language.
+eeguni allows to set classification using a simple sql-like language.
 """
 
+# remove space in string
 def __clean__(string):
-    return string.replace(" ", "")  # .replace("\"'", "").replace("'\"", "")
+    return string.replace(" ", "")  
 
-
+# get the string between two delimiters (delimiters are excluded)
 def __btwn__(string, left_limitator, right_limitator):
     return string.split(left_limitator)[1].split(right_limitator)[0]
 
-
+# find in the store all results containing the given keywords
 def __keywords__(string):
     if(WITH in string):
         return [x.replace("'", "") for x in __btwn__(string, WITH + LIST_BRAC_IN, LIST_BRAC_OUT).split(SEPARATOR)]
 
-
+# return the name of the databases to which the request is applied
 def __get_bdds__(request):
     return __btwn__(request, GET_SCORES_IN, USING).split(SEPARATOR)
 
-
+# get the parameters (subject, pair, etc. -> see parameters.py) associated with the request
 def __get_conditions__(request):
     cdts = request.split(USING)[1].split(SEPARATOR)
     for i in range(0, len(cdts)):
@@ -66,17 +67,16 @@ def __to_int_if_needed(array):
     return array
 
 
+# interpret value of parameters such as subject=[1,2]
 def __interpret_value__(value):
-    if FUN_BRAC_IN in value:
+    if FUN_BRAC_IN in value: # workaround for custom validation method
         return [__btwn__(value, FUN_BRAC_IN, FUN_BRAC_OUT).replace(";", SEPARATOR).replace("\\n", "\n")[2:-2]]
     if LIST_BRAC_IN in value:
-        # if "@FUN" in value:  # workaround for custom validation method
-        #     return value.split('')
         return __to_int_if_needed(__btwn__(value, LIST_BRAC_IN,
                                            LIST_BRAC_OUT).split(LIST_SEPARATOR))
     return value
 
-
+# get all parameters associated with database 'bdd_name'
 def __get_params_for_bdd__(bdd_name, conditions):
     ret = {}
     for cdt, bdd in conditions:
@@ -86,11 +86,12 @@ def __get_params_for_bdd__(bdd_name, conditions):
                 ASSIGNATION.join(name_value[1:]))
     return ret
 
-
+# if cache, results will no be computed but obtained from the store if present.
+# Also computed results will be automatically stored.
 def __is_cache_request(request):
     return CACHE in request
 
-
+# set parameters for all bdds and set default value for missing parameters also.
 def __get_params__(bdds, conditions, use_store):
     ret = {}
     for bdd in bdds:
@@ -100,6 +101,7 @@ def __get_params__(bdds, conditions, use_store):
     return ret
 
 
+# wrap it together...
 def interpret(request):
     request = __clean__(request)
     bdds = __get_bdds__(request)

@@ -24,7 +24,7 @@ VALUES = 0
 def serverRunning():
     return os.path.exists("server.lock")
 
-
+# delete lockfile is no instance is using it
 def autoclean():
     if(serverRunning()):
         try:
@@ -48,7 +48,7 @@ def startAndWaitForServer():
     	while not serverRunning():
             time.sleep(0.1)
 
-
+# a condition is something such as 'using subject=[1,2]' in the request
 def __write_condition__(bdds, bdd, valuesAndDatabase, key):
     bdds[bdd] = True
     _for = FOR + ' ' + bdd
@@ -69,6 +69,9 @@ class ClientRequest():
     def useCache(self, isCache):
         self.isCache = isCache
 
+    # Keywords are specific request on the store.
+    # See \server\lang\request_interpreter.py [__keywords__]
+    # See \server\classif\classification_wrapper.py [run_request]
     def setKeywords(self, keywords):
         self.keywords = keywords
 
@@ -78,15 +81,19 @@ class ClientRequest():
     def __getitem__(self, key):
         return self.using[key]
 
+    # in the form request[key] = (values, database); such as request['subject'] = ('all', PHMD)
     def __setitem__(self, key, valuesAndDatabase):
+        # valuesAndDatabase is of type Tuple (values, database)
         self.using[key] = valuesAndDatabase
 
+    # build the request to send to the server
     def __build_pload__(self):
+        # check if CACHE enable
         self.pload = CACHE + ' ' if self.isCache else ''
         self.pload += WITH + \
             str(self.keywords) + ' ' if len(self.keywords) > 0 else ''
         self.pload += GET_SCORES_IN
-
+        # write condition such as subject = [1,2]
         bdds = {}
         conditions = ''
         for key, valuesAndDatabase in self.using.items():

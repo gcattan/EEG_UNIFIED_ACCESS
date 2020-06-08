@@ -48,9 +48,6 @@ dataset_alpha = AlphaWaves(useMontagePosition=False)
 dataset_vr = VirtualReality(useMontagePosition=False)
 dataset_phmd = HeadMountedDisplay(useMontagePosition=False)
 
-# args = params.get_dflt_bi2012()
-# params = params.Parameters(True, **args)
-
 
 def run_request(str_request):
     store = Store()

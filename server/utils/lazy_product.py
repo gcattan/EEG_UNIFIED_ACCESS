@@ -1,3 +1,20 @@
+"""
+LazyProduct provides a way to iterate through cartesians product of multiple dimensions.
+In short, it allows use to replace nested loop by an unique loop, such as:
+for a in A:
+    for b in B:
+        blablabla
+
+->
+
+for lz in LazyProduct(A, B):
+    blablabla
+
+Implementation is similar to mixed-radix number, for which each digit as a different dimension.
+Given two parameters A and B with respective dimension N and M, and (ai bj) the current combination.
+Then the next combination is just (ai bj) + 1, which results in (ai bj+1) if j+1 < M or (ai+1 0) else.
+"""
+
 def get_dico_keys(*names):
     return names
 
@@ -23,6 +40,7 @@ class LazyProduct():
     def __iter__(self):
         return self
 
+    # return the next combination
     def __next__(self):
         self.string_rep = None
         self.iterators[0] += 1

@@ -13,6 +13,7 @@ PORT_NUMBER = 8585
 
 class apiCall(BaseHTTPRequestHandler):
 
+    # correct URL are in the form localhost:8585/action?parameters
     def _get_action_(self):
         last_history = self.path.split('/')[-1]
         pload = last_history.split("?")
@@ -22,10 +23,12 @@ class apiCall(BaseHTTPRequestHandler):
 
     # Handler for the GET requests
 
+
     def do_GET(self):
 
         # Send the html message
         action, params = self._get_action_()
+        # fix spaces
         params = str(params).replace("%20", " ")
         if(action == "request"):
             answer = str(run_request(params))
@@ -51,6 +54,8 @@ try:
         # incoming request
         server = HTTPServer(('', PORT_NUMBER), apiCall)
         server.timeout = 10
+        # throws error if time out
+        #https://stackoverflow.com/questions/4419650/how-to-implement-timeout-in-basehttpserver-basehttprequesthandler-python/61644043#61644043
         server.handle_timeout = lambda: (_ for _ in ()).throw(TimeoutError())
         print('Started httpserver on port ', PORT_NUMBER)
 

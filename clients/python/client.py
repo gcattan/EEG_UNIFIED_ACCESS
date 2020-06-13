@@ -22,13 +22,15 @@ VALUES = 0
 
 
 def serverRunning():
-    return os.path.exists("server.lock")
+    lock_path = os.path.dirname(os.path.realpath(__file__)) + "/server.lock"
+    return os.path.exists(lock_path)
 
 # delete lockfile is no instance is using it
 def autoclean():
+    lock_path = os.path.dirname(os.path.realpath(__file__)) + "/server.lock"
     if(serverRunning()):
         try:
-            os.remove("server.lock")
+            os.remove(lock_path)
         except:
             print("Failed to delete lock file: server is already running.")
 

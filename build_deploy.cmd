@@ -1,11 +1,13 @@
 @echo off
 rmdir /s /q dist 
 python setup.py sdist 
-python -m twine upload --repository testpypi dist/*
+REM python -m twine upload --repository testpypi dist/*
+python -m twine upload dist/*
 cd ..
-pip uninstall -y eeguni-GCATTAN
-python -m pip install --no-binary=:all: --index-url https://test.pypi.org/simple/ --no-deps eeguni-GCATTAN
-pip uninstall -y eeguni-GCATTAN
-python -m pip install --no-binary=:all: --index-url https://test.pypi.org/simple/ --no-deps eeguni-GCATTAN
-python
-
+REM pip uninstall -y eeguni-GCATTAN
+pip uninstall -y eeguni
+REM python -m pip install --no-binary=:all: --index-url https://test.pypi.org/simple/ --no-deps eeguni-GCATTAN
+REM pip uninstall -y eeguni-GCATTAN
+REM python -m pip install --no-binary=:all: --index-url https://test.pypi.org/simple/ --no-deps eeguni-GCATTAN
+REM python
+pip install eeguni

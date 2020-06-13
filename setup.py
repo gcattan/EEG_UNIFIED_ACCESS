@@ -18,8 +18,8 @@ with open("README.md", "r") as fh:
 #     requirements = fr.readlines()
 
 setuptools.setup(
-    name="eeguni-GCATTAN", # Replace with your own username
-    version="7.0",
+    name="eeguni", # Replace with your own username
+    version="0.0.1",
     author="Gregoire Cattan",
     author_email="gcattan@hotmail.fr",
     description="A server/client wrapper for EEG datasets",
@@ -37,7 +37,6 @@ setuptools.setup(
     cmdclass={
         'install': PostInstallCommand,
     },
-    # install_requires=['mne'],
     python_requires='>=3.6',
     include_package_data=True
 )

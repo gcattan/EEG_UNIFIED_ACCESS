@@ -1,3 +1,7 @@
+# Deprecation Notice
+
+This work is no longer maintain. The repositories from the GIPSA-lab will be integrated in [moabb](https://github.com/NeuroTechX/moabb).
+
 # EEG_UNIFIED_ACCESS (eeguni)
 Unified Access to EEG databases recorded at GIPSA-lab.
 
